@@ -1,0 +1,46 @@
+<!-- sign up -->
+<div class="signupContainer">
+    <div class="section">
+        <h1>Sign Up!</h1>
+        <h3>Welcome Friend! <br>Joining Operatime is easy.</h3>
+        <p>Fill the columns as required, you'll be Booking in no time.</p>
+        <form [formGroup]="signUpForm" (ngSubmit)="signUp()">
+            <!-- Username -->
+            <div class="form-floating mb-0 col-md-lg">
+              <input name="username" formControlName="username" type="text" class="form-control" id="floatingUsername" placeholder="name@example.com">
+              <label for="floatingUsername">Username</label>
+            </div>
+             <!-- username validation -->
+              <div style="height: 5px; margin-top: 0px; margin-bottom: 10px;">
+                <div *ngIf="this.signUpForm.get('username')?.errors && this.signUpForm.get('username')?.touched" class="text-light" style="font-size: 12px;">
+                  username required
+                </div>
+              </div>
+            <!-- email -->
+            <div class="form-floating mt-3 mb-0 col-md-lg">
+              <input name="email" formControlName="email" type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+              <label for="floatingInput">Email address</label>
+            </div>
+             <!-- email validation -->
+              <div style="height: 5px; margin-top: 0px; margin-bottom: 10px;">
+                <div *ngIf="this.signUpForm.get('email')?.errors && this.signUpForm.get('email')?.touched" class="text-light" style="font-size: 12px;">
+                  Type valid Email ID
+                </div>
+              </div>
+              <!-- password -->
+            <div class="form-floating mt-3 col-md-lg">
+              <input name="password" formControlName="password" type="password" class="form-control" id="floatingPassword" placeholder="Password">
+              <label for="floatingPassword">Password</label>
+            </div>
+            <!-- password validation -->
+            <div style="height: 5px; margin-top: 0px; margin-bottom: 10px;">
+              <div *ngIf="this.signUpForm.get('password')?.errors && this.signUpForm.get('password')?.touched" class="text-light" style="font-size: 12px;">
+                Type valid password, special characters not allowed
+              </div>
+            </div>
+            <div class="signUpDiv">
+              <button type="submit" class="btn btn-danger mt-4 rounded pt-2 pb-2 ps-4 pe-4">Sign Up</button>
+            </div>
+        </form>
+    </div>
+</div>

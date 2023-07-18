@@ -1,0 +1,34 @@
+<!-- sidebar -->
+<!-- <div class="sidebar">
+    <i routerLink="/search" style="cursor: pointer;" class="left-menu-icon fas fa-search"></i>
+    <i routerLink="/" style="cursor: pointer;" class="left-menu-icon fas fa-home"></i>
+    <i style="cursor: pointer;" class="left-menu-icon fas fa-users"></i>
+    <i style="cursor: pointer;" class="left-menu-icon fas fa-bookmark"></i>
+    <i style="cursor: pointer;" class="left-menu-icon fas fa-tv"></i>
+    <i style="cursor: pointer;" class="left-menu-icon fas fa-hourglass-start"></i>
+</div>  -->
+
+<!-- Container for sidebar(s) + page content -->
+<div class="ng-side"> 
+    <ng-sidebar-container>
+    
+        <!-- A sidebar -->
+        <ng-sidebar [(opened)]="_opened">
+          <h6 (click)="_toggleSidebar()"><i style="cursor: pointer; color: white;" class="left-menu-icon fas fa-close fa-xl fa-xl"></i></h6>
+          <div class="sidebar">
+            <i routerLink="/search" style="cursor: pointer;" class="left-menu-icon fas fa-search fa-xl"></i>
+            <i routerLink="/" style="cursor: pointer;" class="left-menu-icon fas fa-home fa-xl"></i>
+            <i routerLink="/profile" style="cursor: pointer;" class="left-menu-icon fas fa-user fa-xl"></i>
+            <i style="cursor: pointer;" class="left-menu-icon fas fa-bookmark fa-xl"></i>
+            <i style="cursor: pointer;" class="left-menu-icon fas fa-tv fa-xl"></i>
+            <i style="cursor: pointer;" class="left-menu-icon fas fa-hourglass-start fa-xl"></i>
+        </div>
+        </ng-sidebar>
+    
+        <!-- Page content trigger -->
+        <div class="divg" ng-sidebar-content>
+            <h6 *ngIf="!trigger"><i class="open-bars" (click)="_toggleSidebar()" class="fa-solid fa-bars fa-xl" style="color: #ffffff;"></i></h6>
+        </div>
+    
+      </ng-sidebar-container>
+</div>

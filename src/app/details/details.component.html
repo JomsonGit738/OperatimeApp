@@ -1,0 +1,27 @@
+<div class="dContainer" [ngStyle]="{ 'background-image': 'linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('+imageBASEurl+movieObject.backdrop_path+')'}">
+    <div class="imageSection" style="height: 450px;">
+        <img [src]="imageBASEurl+movieObject.poster_path" alt="">
+    </div>  
+    <div class="dSection">
+        <div class="details">
+            <h1 class="title">{{movieObject.title}}</h1>
+            <h6 class="dim"><i class="fa-solid fa-star" style="color: #c90303;"></i> {{rate+" • "+movieObject.release_date}}</h6>
+            <p class="dim genres" *ngFor="let g of movieObject.genres; let i = index">
+                {{"• "+g.name}}
+            </p>
+            <p class="description">{{movieObject.overview}}</p>
+            <div class="staring">
+                <p class="dim" style="font-size: 13px;">Starring:</p>
+                <p class="star" style="font-size: 13px;">{{starring}}</p>
+            </div>
+            <div class="director">
+                <p class="dim" style="font-size: 13px;">Directed by</p>
+                <p style="font-size: 13px;">{{director}}</p>
+            </div>
+            
+        </div>
+    </div>
+    <div class="youtube">
+        <iframe width="500" height="294" [src]="trailerKey" title="YouTube" frameborder="0" allowfullscreen="1" class="img-cover" loading="lazy"></iframe>    
+    </div>
+</div>

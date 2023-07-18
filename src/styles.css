@@ -1,0 +1,28 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans+Extra+Condensed:wght@300;400&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Roboto:wght@100;300;400;500;900&family=Satisfy&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+/* 
+    font-family: 'Fira Sans Extra Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
+    font-family: 'Roboto', sans-serif;
+    font-family: 'Satisfy', cursive;
+    font-family: 'Space Grotesk', sans-serif;
+*/
+*{
+    font-family: 'Roboto', sans-serif;
+}
+body{
+    background-color: rgba(0, 0, 0, 0.971);
+}
+::-webkit-scrollbar{
+    width: 0px;
+    height: 0px;
+}
+::-webkit-scrollbar-thumb {
+    background-color: rgb(124, 11, 11);
+    border-radius: 10px;
+}
+
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

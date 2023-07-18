@@ -1,0 +1,67 @@
+
+/* .sidebar {
+    width: 50px;
+    height: 100%;
+    background-color: rgb(0, 0, 0);
+    position: fixed;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 120px;
+    z-index: 100;
+  }
+  
+  .left-menu-icon {
+    color: rgb(255, 255, 255);
+    font-size: 20px;
+    margin-bottom: 40px;
+  } */
+
+  /* new ng-sidebar-v2 */
+
+  .ng-side{
+    width: 60px;
+    height: 100vh;
+    /* background-color: rgba(0, 255, 255, 0.366); */
+    position: fixed;
+    top: 0;
+    z-index: 100;
+  }
+  /* ng-sidebar-container{
+    background-color: rgba(137, 43, 226, 0.286);
+  } */
+  h6{
+    margin-top: 30px;
+    margin-left: 20px;
+  }
+  h6 i{
+    box-shadow: 0 0 24px 5px rgb(0, 0, 0);
+  }
+  h6 i:hover{
+    box-shadow: 0 0 24px 10px rgba(255, 255, 255, 0.321);
+    width: fit-content;
+  }
+  ::ng-deep .ng-sidebar{
+    color: white;
+    background-color: rgba(0, 0, 0, 0.301);
+    width: 60px;
+  }
+  .sidebar{
+    /* background-color: aquamarine; */
+    color: white;
+    width: 100%;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 70px;
+  }
+  .sidebar i{
+    cursor: pointer;
+  }
+  .sidebar i:focus{
+    outline: none;
+  }
+  

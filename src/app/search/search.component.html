@@ -1,0 +1,37 @@
+<mat-progress-bar *ngIf="progressEvent" [color]="color" mode="indeterminate"></mat-progress-bar>
+<div class="searchContianer">
+    <main>
+
+        <section class="py-5 text-center container">
+          <div class="row py-lg-5" style="color: white;">
+            <div class="col-lg-6 col-md-8 mx-auto">
+              <h1 class="fw-light">Search Movies</h1>
+              <p>Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don’t simply skip over it entirely.</p>
+              <div class="form-floating mb-3 d-flex">
+                <input class="re-text" [(ngModel)]="searchKey" (keyup)="clickPress($event)" type="text" class="form-control" id="floatingInput" placeholder="Type Movie name...">
+                <label for="floatingInput">Type movie name</label>
+                <div (click)="search()" style="width: 60px; height: 58px; background-color: brown; border-radius: 8px; cursor: pointer;
+                align-self: center; margin-left: 10px;display: flex;align-items: center;justify-content: center;">
+                    <i class="fa-solid fa-magnifying-glass fa-2xl">
+                    </i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+                
+        <div class="album py-5">
+          <div class="container">
+      
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-3" >
+              <div class="col" *ngFor="let m of collection.results" >
+                <div class="card shadow-sm bg-dark" >
+                  <img class="re-image"  [src]="m.poster_path == null?ErrorImage:imageBASEurl+m.poster_path" (click)="movieDetails(m.id)" alt="">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+      </main>
+</div>

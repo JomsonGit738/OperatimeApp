@@ -1,0 +1,45 @@
+<!-- login -->
+<div class="signupContainer">
+    <div class="section">
+        <h1>Login!</h1>
+        <h3>Welcome back Friend! <br>Let us make it easy for you</h3>
+        <p>Need Help? <b>Forgot password</b></p>
+          <form [formGroup]="loginForm" (ngSubmit)="logIn()">
+            <!-- email -->
+            <div class="form-floating col-md-lg">
+              <input name="email" formControlName="email" type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+              <label for="floatingInput">Email address</label>
+            </div>
+            <!-- email validation -->
+            <div style="height: 5px; margin-top: 0px; margin-bottom: 10px;">
+              <div *ngIf="this.loginForm.get('email')?.errors && this.loginForm.get('email')?.touched" class="text-light" style="font-size: 12px;">
+                Type valid Email ID
+              </div>
+            </div>
+            <!-- password -->
+            <div class="form-floating mt-3 col-md-lg">
+              <input name="password" formControlName="password" type="password" class="form-control" id="floatingPassword" placeholder="Password">
+              <label for="floatingPassword">Password</label>
+            </div>
+            <!-- password validation -->
+            <div style="height: 5px; margin-top: 0px; margin-bottom: 5px;">
+              <div *ngIf="this.loginForm.get('password')?.errors && this.loginForm.get('password')?.touched" class="text-light" style="font-size: 12px;">
+                Type valid password, special characters not allowed
+              </div>
+            </div>
+            <button type="submit" class="btn btn-danger btn-lg btn-block mt-3 rounded-pill ps-5 pe-5">Login</button>
+            <div style="margin-top: 10px;">
+              <hr style="color: white;">
+              <p style="color: white; max-width: 350px;">Don't you have an account in Operatime!<br><a routerLink="/signup">click here</a> to create an account </p>
+              
+              <p style="font-size: 12px;" class="mb-2">Not interestd in creating account! Sign Up with Google</p>
+              <asl-google-signin-button 
+              theme="filled_black"
+              shape="pill" 
+              type='standard' 
+              text="continue_with"
+              size='medium' ></asl-google-signin-button>
+            </div>
+          </form>
+    </div>
+</div>

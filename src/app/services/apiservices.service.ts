@@ -1,7 +1,11 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+
+//creating headers of HttpHeaders Globally for overloading
+const options = {
+  headers:new HttpHeaders()
+}
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +17,7 @@ export class ApiservicesService {
   constructor(private http:HttpClient) { }
 
   baseUrl = 'https://operatimeserver-2023.onrender.com'
-  //baseUrl = 'http://localhost:3000'
+  // baseUrl = 'http://localhost:3000'
   imageBASEurl = "https://image.tmdb.org/t/p/"
 
   //options url
@@ -94,6 +98,19 @@ export class ApiservicesService {
     return this.http.get(`${this.baseUrl}/getseats/${id}`)
   }
 
+  appednToken(){
+    //get token from local storage
+    const token = sessionStorage.getItem("token")
+    //create http header
+    let head = new HttpHeaders()
+    if(token){
+      //append token in headers
+      head = head.append("access-token",token)
+      options.headers = head
+    }
+    return options
+  }
+
   //seatBooking
   seatBooking(date:any,operaId:any,movietitle:any,seats:any,email:any,time:any,mimage:any){
     const body = {
@@ -106,7 +123,7 @@ export class ApiservicesService {
       mimage
     }
 
-    return this.http.post(`${this.baseUrl}/booking`,body)
+    return this.http.post(`${this.baseUrl}/booking`,body,this.appednToken())
   }
 
 }

@@ -36,11 +36,13 @@ export class LoginComponent implements OnInit {
 
     this.api.GoogleSignIn(email,username).subscribe({
       next:(res:any)=>{
-        sessionStorage.setItem('username',res.username)
-        sessionStorage.setItem('email',res.email)
-        sessionStorage.setItem('photo',user_Photo)
+        console.log(res);
+        sessionStorage.setItem('username',res.existingUser.username)
+          sessionStorage.setItem('email',res.existingUser.email)
+          sessionStorage.setItem('photo',user_Photo)
+          sessionStorage.setItem('token',res.token)
           //behaviorSubject
-          this.api.sessionUser.next(res.username)
+          this.api.sessionUser.next(res.existingUser.username)
           this.toast.success({detail:"Sign In successful",summary:'No more waiting, Book Now!',duration:5000});
         setTimeout(()=>{
           this.router.navigateByUrl('/')
@@ -71,15 +73,16 @@ export class LoginComponent implements OnInit {
       this.api.logIn(email,password).subscribe({
         next:(res:any)=>{
           //console.log(res);
-          sessionStorage.setItem('username',res.username)
-          sessionStorage.setItem('email',res.email)
+          sessionStorage.setItem('username',res.existingUser.username)
+          sessionStorage.setItem('email',res.existingUser.email)
+          sessionStorage.setItem('token',res.token)
 
           //behaviorSubject
-          this.api.sessionUser.next(res.username)
+          this.api.sessionUser.next(res.existingUser.username)
           
 
           this.loginForm.reset()
-          this.toast.success({detail:"Login Successful!",summary:'Hai, '+res.username,duration:10000});
+          this.toast.success({detail:"Login Successful!",summary:'No more waiting, Book Now!',duration:10000});
           this.router.navigateByUrl('')
         },error:(err:any)=>{
           this.toast.error({detail:"Error!",summary:err.error,duration:10000});

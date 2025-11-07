@@ -1,93 +1,153 @@
-<!-- main container -->
-<!-- <div style="width: 100%; height: 200px;">
-
-</div> -->
-<div class="ms-0 me-0 allmovies">
-    <div class="content-container">
-        <!-- header 1 movie poster -->
-        <div [ngStyle]="{ 'background-image': 'linear-gradient(to bottom, rgba(0,0,0,0), #151515), url('+this.image+')'}" class="fp1" >
-            <div class="tMovies-backdrop">
-                <div class="movieCard">
-                    <h2 style="color: white; font-weight: bold;">{{title}}</h2>
-                    <!-- <p style="margin-bottom: 5px;"><i class="fa-solid fa-star" style="color: #e00606;"></i> {{rate}}</p> -->
-                    <!-- <p style="font-size: 14px; margin-bottom: 5px;">{{this.genre}}</p> -->
-                    <p class="featured-desc">{{desc}}</p>
-                    <!-- <i class="fa-solid fa-ticket"></i> -->
-                    <div class="direct" style="display: flex; justify-content: space-between;">
-                        <button (click)="routeForBooking(mId,title)" class="featured-button">Book tickets <i class="fa-solid fa-ticket"></i></button>
-                        <i (click)="routeWithId(mId)" class="fa-solid fa-circle-info fa-2xl" style="color: #ffffff; align-self: center; cursor: pointer;"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="tMovies-poster">
-                        <h2>In Theatre now</h2>
-                        <div class="posterClass">
-                            <div class = "poster" *ngFor="let movie of NowPlaying.slice(0,4); let i = index">
-                                <img (click)="getMovieWithId(i)" [src]="imageBASEurl+movie.poster_path" alt="">
-                            </div>
-                        </div>
-                    
-            </div>
+<div
+  *ngIf="combinedData | async as movieData; else loader"
+  class="ms-0 me-0 allmovies"
+>
+  <div class="content-container">
+    <div
+      [ngStyle]="{
+        'background-image':
+          'linear-gradient(to bottom, rgba(0,0,0,0), #151515), url(' +
+          this.image +
+          ')'
+      }"
+      class="fp1"
+    >
+      <div class="tMovies-backdrop">
+        <div class="movieCard">
+          <h2 style="color: white; font-weight: bold">{{ title }}</h2>
+          <p class="featured-desc">{{ desc }}</p>
+          <div
+            class="direct"
+            style="display: flex; justify-content: space-between"
+          >
+            <button
+              (click)="routeForBooking(mId, title)"
+              class="featured-button"
+            >
+              Book tickets <i class="fa-solid fa-ticket"></i>
+            </button>
+            <i
+              (click)="routeWithId(mId)"
+              class="fa-solid fa-circle-info fa-2xl"
+              style="color: #ffffff; align-self: center; cursor: pointer"
+            ></i>
+          </div>
         </div>
-        <!-- New Releases Movie List -->
-        <div class="mContainer">
-            <div class="mContainerHead">
-                <h2>New Releases</h2>
-            </div>
-            <div class="mContainerList">
-                <div class = "card" *ngFor="let movie of allMoviesData.slice(0,6)">
-                    <img (click)="routeWithId(movie.id)" [src]="imageBASEurl+movie.poster_path" alt="">
-                    <div class="card-content">
-                      <h4>{{movie.title}}</h4>
-                      <p><i class="fa-solid fa-star" style="color: #e00606;"></i> {{movie.vote_average}} /10</p>
-                      <div class="genre" style="background-color: #020202;" *ngFor="let m of movie.genre_ids; let j = index" >
-                        {{GenreList[movie.genre_ids[j]]}}
-                      </div>
-                    </div>
-                  </div>
-            </div>
+      </div>
+      <div class="tMovies-poster">
+        <h2>In Theatre now</h2>
+        <div class="posterClass">
+          <div
+            class="poster"
+            *ngFor="let movie of NowPlaying.slice(0, 4); let i = index"
+          >
+            <img
+              (click)="getMovieWithId(i)"
+              [src]="imageBASEurl + movie.poster_path"
+              alt=""
+            />
+          </div>
         </div>
-        <!-- second movie list -->
-        <div class="mContainer">
-            <div class="mContainerHead">
-                <h2>Trending Now</h2>
-            </div>
-            <div class="mContainerList">
-                <div class = "card" *ngFor="let movie of allMoviesData.slice(6,12)">
-                    <img (click)="routeWithId(movie.id)" [src]="imageBASEurl+movie.poster_path" alt="">
-                    <div class="card-content">
-                      <h4>{{movie.title}}</h4>
-                      <p><i class="fa-solid fa-star" style="color: #e00606;"></i> {{movie.vote_average}} /10</p>
-                      <div class="genre" style="background-color: #020202;" *ngFor="let m of movie.genre_ids; let j = index" >
-                        {{GenreList[movie.genre_ids[j]]}}
-                      </div>
-                    </div>
-                  </div>
-            </div>
-        </div>
-        <!-- header 2 -->
-        <div class="featured-content fp2">
-            <h1 style="color: white; font-weight: bold;">The Super Mario Bros</h1>
-            <p  class="featured-desc" style="max-width: 300px;">While working underground to fix a water main, Brooklyn plumbers—and brothers—Mario and Luigi are transported down a mysterious pipe and wander into a magical new world. But when the brothers are separated, Mario embarks on an epic quest to find Luigi.</p>
-            <!-- <button class="featured-button">Book Now <i class="fa-solid fa-circle-play"></i></button> -->
-        </div>
-        <!-- Mostly watched Movie List -->
-        <div class="mContainer">
-            <div class="mContainerHead">
-                <h2>Latest Movies</h2>
-            </div>
-            <div class="mContainerList">
-                <div class = "card" *ngFor="let movie of allMoviesData.slice(12,18)">
-                    <img (click)="routeWithId(movie.id)" [src]="imageBASEurl+movie.poster_path" alt="">
-                    <div class="card-content">
-                      <h4>{{movie.title}}</h4>
-                      <p><i class="fa-solid fa-star" style="color: #e00606;"></i> {{movie.vote_average}} /10</p>
-                      <div class="genre" style="background-color: #020202;" *ngFor="let m of movie.genre_ids; let j = index" >
-                        {{GenreList[movie.genre_ids[j]]}}
-                      </div>
-                    </div>
-                  </div>
-            </div>
-        </div>
+      </div>
     </div>
+    <div class="mContainer">
+      <div class="mContainerHead">
+        <h2>New Releases</h2>
+      </div>
+      <div class="mContainerList">
+        <div class="card" *ngFor="let movie of allMoviesData.slice(0, 6)">
+          <img
+            (click)="routeWithId(movie.id)"
+            [src]="imageBASEurl + movie.poster_path"
+            alt=""
+          />
+          <div class="card-content">
+            <h4>{{ movie.title }}</h4>
+            <p>
+              <i class="fa-solid fa-star" style="color: #e00606"></i>
+              {{ movie.vote_average }} /10
+            </p>
+            <div
+              class="genre"
+              style="background-color: #020202"
+              *ngFor="let m of movie.genre_ids; let j = index"
+            >
+              {{ GenreList[movie.genre_ids[j]] }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mContainer">
+      <div class="mContainerHead">
+        <h2>Trending Now</h2>
+      </div>
+      <div class="mContainerList">
+        <div class="card" *ngFor="let movie of allMoviesData.slice(6, 12)">
+          <img
+            (click)="routeWithId(movie.id)"
+            [src]="imageBASEurl + movie.poster_path"
+            alt=""
+          />
+          <div class="card-content">
+            <h4>{{ movie.title }}</h4>
+            <p>
+              <i class="fa-solid fa-star" style="color: #e00606"></i>
+              {{ movie.vote_average }} /10
+            </p>
+            <div
+              class="genre"
+              style="background-color: #020202"
+              *ngFor="let m of movie.genre_ids; let j = index"
+            >
+              {{ GenreList[movie.genre_ids[j]] }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="featured-content fp2">
+      <h1 style="color: white; font-weight: bold">The Super Mario Bros</h1>
+      <p class="featured-desc" style="max-width: 300px">
+        While working underground to fix a water main, Brooklyn plumbers—and
+        brothers—Mario and Luigi are transported down a mysterious pipe and
+        wander into a magical new world. But when the brothers are separated,
+        Mario embarks on an epic quest to find Luigi.
+      </p>
+    </div>
+    <div class="mContainer">
+      <div class="mContainerHead">
+        <h2>Latest Movies</h2>
+      </div>
+      <div class="mContainerList">
+        <div class="card" *ngFor="let movie of allMoviesData.slice(12, 18)">
+          <img
+            (click)="routeWithId(movie.id)"
+            [src]="imageBASEurl + movie.poster_path"
+            alt=""
+          />
+          <div class="card-content">
+            <h4>{{ movie.title }}</h4>
+            <p>
+              <i class="fa-solid fa-star" style="color: #e00606"></i>
+              {{ movie.vote_average }} /10
+            </p>
+            <div
+              class="genre"
+              style="background-color: #020202"
+              *ngFor="let m of movie.genre_ids; let j = index"
+            >
+              {{ GenreList[movie.genre_ids[j]] }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<ng-template #loader>
+  <div class="d-flex align-items-center justify-content-center w-100 vh-100">
+    <app-loader></app-loader>
+  </div>
+</ng-template>

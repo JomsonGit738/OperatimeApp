@@ -1,17 +1,24 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 
-import { ApiservicesService, MovieSummary } from '../services/apiservices.service';
+import {
+  ApiservicesService,
+  MovieSummary,
+} from '../services/apiservices.service';
 import {
   GenresItem,
   GenresList,
   MovieItemDetails,
 } from 'src/shared/models/movie.interface';
-import {
-  ResponseData,
-  ResponseData2,
-} from 'src/shared/models/common.interface';
+import { catchError, combineLatest, EMPTY, map, Observable, tap } from 'rxjs';
+import { LoaderComponent } from 'src/shared/components/loader/loader.component';
 
 @Component({
   selector: 'app-home',
@@ -19,7 +26,7 @@ import {
   styleUrls: ['./home.component.css'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, LoaderComponent],
 })
 export class HomeComponent implements OnInit {
   image = '';
@@ -32,6 +39,8 @@ export class HomeComponent implements OnInit {
   GenreList: Record<number, string> = {};
   NowPlaying: MovieSummary[] = [];
   readonly imageBASEurl = 'https://image.tmdb.org/t/p/original';
+  combinedData!: Observable<any>;
+  isLoading = signal(true);
 
   constructor(
     private readonly api: ApiservicesService,
@@ -40,48 +49,41 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getGenreList();
-    this.getHomeMovies();
-    this.getNowPlayingMovies();
-  }
-
-  getHomeMovies(): void {
-    this.api.getMovies<MovieItemDetails>().subscribe({
-      next: (res: ResponseData<MovieItemDetails>) => {
-        this.allMoviesData = res.results;
-        this.cdr.markForCheck();
-      },
-      error: (err: unknown) => {
-        console.error(err);
-      },
+    this.combinedData = combineLatest({
+      genersList: this.getGenreList(),
+      homeMovies: this.getHomeMovies(),
+      nowPlayingsMovies: this.getNowPlayingMovies(),
     });
   }
 
-  getGenreList(): void {
-    this.api.genreList<GenresList>().subscribe({
-      next: (res: GenresList) => {
-        res.genres.forEach((item: GenresItem) => {
+  getHomeMovies(): Observable<any> {
+    return this.api.getMovies<MovieItemDetails>().pipe(
+      map((res) => res.results),
+      catchError((e) => this.onError(e))
+    );
+  }
+
+  getGenreList(): Observable<any> {
+    return this.api.genreList<GenresList>().pipe(
+      map((res) => res.genres),
+      tap((data) => {
+        data.forEach((item: GenresItem) => {
           this.GenreList[item.id] = item.name;
         });
-        this.cdr.markForCheck();
-      },
-      error: (err: unknown) => {
-        console.error(err);
-      },
-    });
+      }),
+      catchError((e) => this.onError(e))
+    );
   }
 
-  getNowPlayingMovies(): void {
-    this.api.nowPlayingMovies<MovieItemDetails>().subscribe({
-      next: (res: ResponseData2<MovieItemDetails>) => {
-        this.NowPlaying = res.results;
+  getNowPlayingMovies(): Observable<any> {
+    return this.api.nowPlayingMovies<MovieItemDetails>().pipe(
+      map((res) => res.results),
+      tap((data) => {
+        this.NowPlaying = data;
         this.setHeader(0);
-        this.cdr.markForCheck();
-      },
-      error: (err: unknown) => {
-        console.error(err);
-      },
-    });
+      }),
+      catchError((e) => this.onError(e))
+    );
   }
 
   setHeader(index: number): void {
@@ -121,5 +123,10 @@ export class HomeComponent implements OnInit {
     localStorage.setItem('bookId', id.toString());
     sessionStorage.setItem('mTitle', title);
     this.router.navigateByUrl('/booking');
+  }
+
+  onError(e: any) {
+    console.error(e);
+    return EMPTY;
   }
 }

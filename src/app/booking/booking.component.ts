@@ -1,14 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ApiservicesService } from '../services/apiservices.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { NgToastService } from 'ng-angular-popup';
-import { IPayPalConfig, ICreateOrderRequest } from 'ngx-paypal';
+import { IPayPalConfig, ICreateOrderRequest, NgxPayPalModule } from 'ngx-paypal';
 import { ThemePalette } from '@angular/material/core';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-booking',
   templateUrl: './booking.component.html',
-  styleUrls: ['./booking.component.css']
+  styleUrls: ['./booking.component.css'],
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, RouterModule, MatProgressBarModule, NgxPayPalModule],
 })
 export class BookingComponent implements OnInit {
 
@@ -34,7 +39,8 @@ export class BookingComponent implements OnInit {
   seatsFromServer:any = []
   newArray:any = []
   constructor(private api:ApiservicesService, 
-    private router:Router, private myToast:NgToastService){}
+    private router:Router, private myToast:NgToastService,
+    private readonly cdr: ChangeDetectorRef){}
 
   ngOnInit(): void {
     this.loadBookingMovie()
@@ -93,6 +99,7 @@ export class BookingComponent implements OnInit {
         } else {
           console.log('no seats booked, yet...');
         }
+        this.cdr.markForCheck();
         
       },error:(err:any)=>{
         console.log(err);
@@ -174,6 +181,7 @@ export class BookingComponent implements OnInit {
       next:(res:any)=>{
         this.movie = res        
         this.image = this.imageBASEurl+this.movie.poster_path
+        this.cdr.markForCheck();
       },error:(err:any)=>{
        console.log(err);
         
@@ -235,6 +243,7 @@ export class BookingComponent implements OnInit {
       this.totalSeatAmount = 0
       //api call to save seat details in db
       this.saveSeatsInDB()
+      this.cdr.markForCheck();
     },
     onCancel: (data, actions) => {
       //console.log('OnCancel', data, actions);
@@ -242,6 +251,7 @@ export class BookingComponent implements OnInit {
       this.payBoolean = false;
       this.seatContainer = false;
       this.myToast.warning({detail:"Canceled!",summary:'Take time! we have seats for you.',duration:5000});
+      this.cdr.markForCheck();
     },
     onError: err => {
       //console.log('OnError', err);
@@ -249,6 +259,7 @@ export class BookingComponent implements OnInit {
       this.payBoolean = false;
       this.seatContainer = false;
       this.myToast.warning({detail:"Error!",summary:'Recheck selected seats and Ineternet connection! try again!',duration:5000});
+      this.cdr.markForCheck();
     },
     onClick: (data, actions) => {
       //console.log('onClick', data, actions);
@@ -276,6 +287,7 @@ export class BookingComponent implements OnInit {
               setTimeout(()=>{
                 this.progressEvent = false
                 this.router.navigateByUrl('/profile')
+                this.cdr.markForCheck();
               },4000)
             }
           },error:(err:any)=>{

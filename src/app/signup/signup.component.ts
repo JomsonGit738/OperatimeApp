@@ -1,5 +1,6 @@
-import { Component} from '@angular/core';
-import { FormBuilder, Validators} from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component} from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import { ApiservicesService } from '../services/apiservices.service';
 import { NgToastService } from 'ng-angular-popup';
 import { Router } from '@angular/router';
@@ -8,7 +9,10 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
-  styleUrls: ['./signup.component.css']
+  styleUrls: ['./signup.component.css'],
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, ReactiveFormsModule],
 })
 export class SignupComponent {
 

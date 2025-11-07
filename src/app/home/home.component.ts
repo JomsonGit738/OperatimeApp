@@ -1,108 +1,125 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
-import { ApiservicesService } from '../services/apiservices.service';
-import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
+
+import { ApiservicesService, MovieSummary } from '../services/apiservices.service';
+import {
+  GenresItem,
+  GenresList,
+  MovieItemDetails,
+} from 'src/shared/models/movie.interface';
+import {
+  ResponseData,
+  ResponseData2,
+} from 'src/shared/models/common.interface';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, RouterModule],
 })
-
 export class HomeComponent implements OnInit {
+  image = '';
+  title = '';
+  desc = '';
+  rate: number | null = null;
+  genre = '';
+  mId: number | null = null;
+  allMoviesData: MovieItemDetails[] = [];
+  GenreList: Record<number, string> = {};
+  NowPlaying: MovieSummary[] = [];
+  readonly imageBASEurl = 'https://image.tmdb.org/t/p/original';
 
-  image:any = ''
-  title:any = ''
-  desc:any = ''
-  rate:any = ''
-  genre:any = ''
-  mId:any = ''
-  allMoviesData:any = []
-  GenreList:any = []
-  NowPlaying:any = []
-  st:string = ", "
-  imageBASEurl:any = 'https://image.tmdb.org/t/p/original'
-  constructor(private api:ApiservicesService, 
-    private e:ElementRef,
-    private router:Router){
-    
-   }
+  constructor(
+    private readonly api: ApiservicesService,
+    private readonly router: Router,
+    private readonly cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    this.getGenreList()
-    this.getHomeMovies() 
-    this.getNowPlayingMovies()
+    this.getGenreList();
+    this.getHomeMovies();
+    this.getNowPlayingMovies();
   }
 
-  getHomeMovies(){
-    this.api.getMovies().subscribe({
-      next:(res:any)=>{
-        this.allMoviesData = res.results
-      },error:(err:any)=>{
-        console.log(err);
-      }
-    })
+  getHomeMovies(): void {
+    this.api.getMovies<MovieItemDetails>().subscribe({
+      next: (res: ResponseData<MovieItemDetails>) => {
+        this.allMoviesData = res.results;
+        this.cdr.markForCheck();
+      },
+      error: (err: unknown) => {
+        console.error(err);
+      },
+    });
   }
 
-  getGenreList(){
-
-    this.api.genreList().subscribe({
-      next:(res:any)=>{
-        //console.log(res);
-        for(const {id,name} of res.genres){
-          //console.log(id+name);
-          this.GenreList[id] = name
-        }
-        //console.log(this.GenreList);
-        
-      },error:(err:any)=>{
-        console.log(err);
-        
-      }
-    })
-  }
-  
-  getNowPlayingMovies(){
-    this.api.nowPlayingMovies().subscribe({
-      next:(res:any)=>{
-        //console.log(res);
-        this.NowPlaying = res.results
-        let i = 0
-        this.setHeader(i)
-      },error:(err:any)=>{
-        console.log(err);
-        
-      }
-    })
+  getGenreList(): void {
+    this.api.genreList<GenresList>().subscribe({
+      next: (res: GenresList) => {
+        res.genres.forEach((item: GenresItem) => {
+          this.GenreList[item.id] = item.name;
+        });
+        this.cdr.markForCheck();
+      },
+      error: (err: unknown) => {
+        console.error(err);
+      },
+    });
   }
 
+  getNowPlayingMovies(): void {
+    this.api.nowPlayingMovies<MovieItemDetails>().subscribe({
+      next: (res: ResponseData2<MovieItemDetails>) => {
+        this.NowPlaying = res.results;
+        this.setHeader(0);
+        this.cdr.markForCheck();
+      },
+      error: (err: unknown) => {
+        console.error(err);
+      },
+    });
+  }
 
-  setHeader(i:any){
-    this.image = this.imageBASEurl+this.NowPlaying[i].backdrop_path
-    this.title = this.NowPlaying[i].title
-    this.desc = this.NowPlaying[i].overview.slice(0,150)+" ..."
-    this.rate = this.NowPlaying[i].vote_average
-    this.genre = ''
-    for(let m of this.NowPlaying[i].genre_ids){
-      this.genre += ' • '+this.GenreList[m]
+  setHeader(index: number): void {
+    const movie = this.NowPlaying[index];
+    if (!movie) {
+      return;
     }
-    this.mId = this.NowPlaying[i].id   
-    
+
+    this.image = `${this.imageBASEurl}${movie.backdrop_path ?? ''}`;
+    this.title = movie.title ?? '';
+    const overview = movie.overview ?? '';
+    this.desc = overview ? `${overview.slice(0, 150)} ...` : '';
+    this.rate = movie.vote_average ?? null;
+    this.genre = movie.genre_ids
+      .map((id) => this.GenreList[id])
+      .filter((name): name is string => Boolean(name))
+      .join(' - ');
+    this.mId = movie.id ?? null;
   }
 
-  getMovieWithId(i:any){
-    this.setHeader(i)
+  getMovieWithId(index: number): void {
+    this.setHeader(index);
   }
 
-  routeWithId(movie_id:any){
-    localStorage.setItem("mId",movie_id)
-    //console.log(movie_id);
-    this.router.navigateByUrl('/movie/details')
+  routeWithId(movieId: number | null): void {
+    if (movieId == null) {
+      return;
+    }
+    localStorage.setItem('mId', movieId.toString());
+    this.router.navigateByUrl('/movie/details');
   }
 
-  routeForBooking(id:any,title:any){
-    localStorage.setItem("bookId",id)
-    sessionStorage.setItem("mTitle",title)
-    //console.log(movie_id);
-    this.router.navigateByUrl('/booking')
+  routeForBooking(id: number | null, title: string): void {
+    if (id == null) {
+      return;
+    }
+    localStorage.setItem('bookId', id.toString());
+    sessionStorage.setItem('mTitle', title);
+    this.router.navigateByUrl('/booking');
   }
 }

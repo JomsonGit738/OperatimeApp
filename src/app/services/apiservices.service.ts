@@ -1,129 +1,160 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import {
+  ResponseData,
+  ResponseData2,
+} from 'src/shared/models/common.interface';
 
-//creating headers of HttpHeaders Globally for overloading
-const options = {
-  headers:new HttpHeaders()
+export interface MovieSummary {
+  id: number;
+  title: string;
+  overview: string;
+  vote_average: number;
+  genre_ids: number[];
+  backdrop_path: string;
+  poster_path: string;
+}
+
+export interface MoviesResponse<T = MovieSummary> {
+  results: T[];
+}
+
+export interface Genre {
+  id: number;
+  name: string;
+}
+
+export interface GenresResponse {
+  genres: Genre[];
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ApiservicesService {
+  readonly sessionUser = new BehaviorSubject<string>('');
 
-  sessionUser = new BehaviorSubject('')
+  private readonly baseUrl = 'https://operatimeserver-2023.onrender.com';
+  // private readonly baseUrl = 'http://localhost:3000';
+  readonly imageBASEurl = 'https://image.tmdb.org/t/p/';
+  private readonly tmdbApiBase = 'https://api.themoviedb.org/3';
 
-  constructor(private http:HttpClient) { }
-
-  baseUrl = 'https://operatimeserver-2023.onrender.com'
-  // baseUrl = 'http://localhost:3000'
-  imageBASEurl = "https://image.tmdb.org/t/p/"
-
-  //options url
-  options:any = {method: 'GET',
-    headers: {
+  private readonly tmdbHeaders = new HttpHeaders({
     accept: 'application/json',
-    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzYzBlYTk4ZDZjMjg5ZTUyN2JiZWEzYWQ5MzQ4YzdiNyIsInN1YiI6IjY0OWE5NTBmZmVkNTk3MDEyY2ViYmU0YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.-roI6am5rg37C19CbC3X-YoKitfUvSMKHzygcNI0_Mo'
-  }}
+    Authorization:
+      'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzYzBlYTk4ZDZjMjg5ZTUyN2JiZWEzYWQ5MzQ4YzdiNyIsInN1YiI6IjY0OWE5NTBmZmVkNTk3MDEyY2ViYmU0YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.-roI6am5rg37C19CbC3X-YoKitfUvSMKHzygcNI0_Mo',
+  });
 
-  getMovies(){
-     return this.http.get('https://api.themoviedb.org/3/movie/popular',this.options)
+  constructor(private http: HttpClient) {}
+
+  private buildTmdbUrl(path: string): string {
+    return `${this.tmdbApiBase}/${path}`;
   }
 
-  //Genre List
-  genreList(){
-    return this.http.get('https://api.themoviedb.org/3/genre/movie/list',this.options)
+  private createAuthOptions(): { headers: HttpHeaders } {
+    const token = sessionStorage.getItem('token');
+    const headers = token
+      ? new HttpHeaders({ 'access-token': token })
+      : new HttpHeaders();
+    return { headers };
   }
 
-  //get movie details with id
-  getMovieById(id:any){
-    return this.http.get(`https://api.themoviedb.org/3/movie/${id}`,this.options)
+  getMovies<T>(): Observable<ResponseData<T>> {
+    return this.http.get<ResponseData<T>>(this.buildTmdbUrl('movie/popular'), {
+      headers: this.tmdbHeaders,
+    });
   }
 
-  //nowPlayingMovies
-  nowPlayingMovies(){
-    return this.http.get('https://api.themoviedb.org/3/movie/now_playing',this.options)
+  genreList<T>(): Observable<T> {
+    return this.http.get<T>(this.buildTmdbUrl('genre/movie/list'), {
+      headers: this.tmdbHeaders,
+    });
   }
 
-  //search movies
-  searchMovies(name:any){
-    return this.http.get(`https://api.themoviedb.org/3/search/movie?query=${name}&include_adult=false&language=en-US&page=1`,this.options)
+  getMovieById(id: string | number | null): Observable<MovieSummary> {
+    return this.http.get<MovieSummary>(this.buildTmdbUrl(`movie/${id}`), {
+      headers: this.tmdbHeaders,
+    });
   }
 
-
-  //full detauls
-  getFull(id:any){
-    return this.http.get(`https://api.themoviedb.org/3/movie/${id}?api_key=3c0ea98d6c289e527bbea3ad9348c7b7&append_to_response=videos,casts`)
+  nowPlayingMovies<T>(): Observable<ResponseData2<T>> {
+    return this.http.get<ResponseData2<T>>(
+      this.buildTmdbUrl('movie/now_playing'),
+      { headers: this.tmdbHeaders }
+    );
   }
 
-  //Sign up
-  signUp(username:any,email:any,password:any){
-    const body = {
-      username,
-      email,
-      password
-    }
-    return this.http.post(`${this.baseUrl}/user/signup`,body)
+  searchMovies<T = MovieSummary>(name: string): Observable<MoviesResponse<T>> {
+    const params = new HttpParams()
+      .set('query', name)
+      .set('include_adult', 'false')
+      .set('language', 'en-US')
+      .set('page', '1');
+
+    return this.http.get<MoviesResponse<T>>(this.buildTmdbUrl('search/movie'), {
+      headers: this.tmdbHeaders,
+      params,
+    });
   }
 
-  //log In
-  logIn(email:any,password:any){
-    const body = {
-      email,
-      password
-    }
-    return this.http.post(`${this.baseUrl}/user/login`,body)
+  getFull(id: string | number | null): Observable<unknown> {
+    const params = new HttpParams()
+      .set('api_key', '3c0ea98d6c289e527bbea3ad9348c7b7')
+      .set('append_to_response', 'videos,casts');
+
+    return this.http.get(this.buildTmdbUrl(`movie/${id}`), { params });
   }
 
-  //Google Sing In
-  GoogleSignIn(email:any,username:any){
-    const body = {
-      email,
-      username
-    }
-    return this.http.post(`${this.baseUrl}/user/gosin`,body)
+  signUp(
+    username: string | null | undefined,
+    email: string | null | undefined,
+    password: string | null | undefined
+  ): Observable<unknown> {
+    const body = { username, email, password };
+    return this.http.post(`${this.baseUrl}/user/signup`, body);
   }
 
-  //get User details
-  getUserDetails(email:any){
-    const body = {
-      email
-    }
-    return this.http.post(`${this.baseUrl}/user/details`,body)
+  logIn(
+    email: string | null | undefined,
+    password: string | null | undefined
+  ): Observable<unknown> {
+    const body = { email, password };
+    return this.http.post(`${this.baseUrl}/user/login`, body);
   }
 
-  //getBookedseats for film
-  getBookedSeats(id:any){
-    return this.http.get(`${this.baseUrl}/getseats/${id}`)
+  GoogleSignIn(
+    email: string | null | undefined,
+    username: string | null | undefined
+  ): Observable<unknown> {
+    const body = { email, username };
+    return this.http.post(`${this.baseUrl}/user/gosin`, body);
   }
 
-  appednToken(){
-    //get token from local storage
-    const token = sessionStorage.getItem("token")
-    //create http header
-    let head = new HttpHeaders()
-    if(token){
-      //append token in headers
-      head = head.append("access-token",token)
-      options.headers = head
-    }
-    return options
+  getUserDetails(email: string | null): Observable<unknown> {
+    const body = { email };
+    return this.http.post(`${this.baseUrl}/user/details`, body);
   }
 
-  //seatBooking
-  seatBooking(date:any,operaId:any,movietitle:any,seats:any,email:any,time:any,mimage:any){
-    const body = {
-      date,
-      operaId,
-      movietitle,
-      seats,
-      email,
-      time,
-      mimage
-    }
-
-    return this.http.post(`${this.baseUrl}/booking`,body,this.appednToken())
+  getBookedSeats(id: string | null): Observable<unknown> {
+    return this.http.get(`${this.baseUrl}/getseats/${id}`);
   }
 
+  seatBooking(
+    date: string,
+    operaId: string,
+    movietitle: string,
+    seats: Array<string | number>,
+    email: string | null,
+    time: string,
+    mimage: string
+  ): Observable<unknown> {
+    const body = { date, operaId, movietitle, seats, email, time, mimage };
+
+    return this.http.post(
+      `${this.baseUrl}/booking`,
+      body,
+      this.createAuthOptions()
+    );
+  }
 }

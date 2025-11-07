@@ -1,11 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ApiservicesService } from '../services/apiservices.service';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-details',
   templateUrl: './details.component.html',
-  styleUrls: ['./details.component.css']
+  styleUrls: ['./details.component.css'],
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule],
 })
 export class DetailsComponent implements OnInit {
 
@@ -17,7 +21,11 @@ export class DetailsComponent implements OnInit {
   trailerKey:any = ''
   imageBASEurl:any = 'https://image.tmdb.org/t/p/original'
 
-  constructor(private api:ApiservicesService, private sanitizer:DomSanitizer){}
+  constructor(
+    private api:ApiservicesService,
+    private sanitizer:DomSanitizer,
+    private readonly cdr: ChangeDetectorRef
+  ){}
 
 
   ngOnInit(): void {
@@ -50,6 +58,7 @@ export class DetailsComponent implements OnInit {
           this.trailerKey = this.sanitizer.bypassSecurityTrustResourceUrl(`https://www.youtube.com/embed/${t[0].key}?&theme=dark&color=white&rel=0`)
         //console.log(this.trailerKey);
         }
+        this.cdr.markForCheck();
         
         
       },error:(err:any)=>{

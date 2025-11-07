@@ -20,11 +20,11 @@
 
         <!-- user status -->
         <div *ngIf="userStatus" class="userDiv">
-          <p class="userName">Hai, {{this.username}}!</p>
+          <p class="userName">Hai, {{ username ?? '' }}!</p>
           <div *ngIf="!userImageStatus" class="userIcon">
-            <h5>{{this.username.substring(0,1).toUpperCase()}}</h5>
+            <h5>{{ (username ?? '').substring(0, 1).toUpperCase() }}</h5>
           </div>
-          <img *ngIf="userImageStatus" class="userImage" [src]="userImage" alt="user_Image">
+          <img *ngIf="userImageStatus" class="userImage" [src]="userImage ?? ''" alt="user_Image">
           <div class="btn-group">
             <i class="fa-solid fa-caret-down ms-2" 
             data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false"

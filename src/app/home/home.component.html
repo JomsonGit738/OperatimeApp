@@ -39,10 +39,10 @@
         <div class="posterClass">
           <div
             class="poster"
-            *ngFor="let movie of NowPlaying.slice(0, 4); let i = index"
+            *ngFor="let movie of movieData?.nowPlayingsMovies?.slice(0, 4)"
           >
             <img
-              (click)="getMovieWithId(i)"
+              (click)="onChangeMovieCard(movie)"
               [src]="imageBASEurl + movie.poster_path"
               alt=""
             />
@@ -55,7 +55,10 @@
         <h2>New Releases</h2>
       </div>
       <div class="mContainerList">
-        <div class="card" *ngFor="let movie of allMoviesData.slice(0, 6)">
+        <div
+          class="card"
+          *ngFor="let movie of movieData.homeMovies.slice(0, 6)"
+        >
           <img
             (click)="routeWithId(movie.id)"
             [src]="imageBASEurl + movie.poster_path"
@@ -70,9 +73,9 @@
             <div
               class="genre"
               style="background-color: #020202"
-              *ngFor="let m of movie.genre_ids; let j = index"
+              *ngFor="let m of movie.genre_ids"
             >
-              {{ GenreList[movie.genre_ids[j]] }}
+              {{ getGenres(movieData.genersList, movie.genre_ids) }}
             </div>
           </div>
         </div>
@@ -83,7 +86,10 @@
         <h2>Trending Now</h2>
       </div>
       <div class="mContainerList">
-        <div class="card" *ngFor="let movie of allMoviesData.slice(6, 12)">
+        <div
+          class="card"
+          *ngFor="let movie of movieData.homeMovies.slice(6, 12)"
+        >
           <img
             (click)="routeWithId(movie.id)"
             [src]="imageBASEurl + movie.poster_path"
@@ -98,9 +104,9 @@
             <div
               class="genre"
               style="background-color: #020202"
-              *ngFor="let m of movie.genre_ids; let j = index"
+              *ngFor="let m of movie.genre_ids"
             >
-              {{ GenreList[movie.genre_ids[j]] }}
+              {{ getGenres(movieData.genersList, movie.genre_ids) }}
             </div>
           </div>
         </div>
@@ -120,7 +126,10 @@
         <h2>Latest Movies</h2>
       </div>
       <div class="mContainerList">
-        <div class="card" *ngFor="let movie of allMoviesData.slice(12, 18)">
+        <div
+          class="card"
+          *ngFor="let movie of movieData.homeMovies.slice(12, 18)"
+        >
           <img
             (click)="routeWithId(movie.id)"
             [src]="imageBASEurl + movie.poster_path"
@@ -137,7 +146,7 @@
               style="background-color: #020202"
               *ngFor="let m of movie.genre_ids; let j = index"
             >
-              {{ GenreList[movie.genre_ids[j]] }}
+              {{ getGenres(movieData.genersList, movie.genre_ids) }}
             </div>
           </div>
         </div>

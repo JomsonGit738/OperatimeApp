@@ -32,20 +32,14 @@ export class HomeComponent implements OnInit {
   image = '';
   title = '';
   desc = '';
-  rate: number | null = null;
-  genre = '';
   mId: number | null = null;
-  allMoviesData: MovieItemDetails[] = [];
-  GenreList: Record<number, string> = {};
-  NowPlaying: MovieSummary[] = [];
   readonly imageBASEurl = 'https://image.tmdb.org/t/p/original';
   combinedData!: Observable<any>;
   isLoading = signal(true);
 
   constructor(
     private readonly api: ApiservicesService,
-    private readonly router: Router,
-    private readonly cdr: ChangeDetectorRef
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -66,11 +60,6 @@ export class HomeComponent implements OnInit {
   getGenreList(): Observable<any> {
     return this.api.genreList<GenresList>().pipe(
       map((res) => res.genres),
-      tap((data) => {
-        data.forEach((item: GenresItem) => {
-          this.GenreList[item.id] = item.name;
-        });
-      }),
       catchError((e) => this.onError(e))
     );
   }
@@ -78,34 +67,17 @@ export class HomeComponent implements OnInit {
   getNowPlayingMovies(): Observable<any> {
     return this.api.nowPlayingMovies<MovieItemDetails>().pipe(
       map((res) => res.results),
-      tap((data) => {
-        this.NowPlaying = data;
-        this.setHeader(0);
-      }),
+      tap((data) => this.onChangeMovieCard(data[0])),
       catchError((e) => this.onError(e))
     );
   }
 
-  setHeader(index: number): void {
-    const movie = this.NowPlaying[index];
-    if (!movie) {
-      return;
-    }
-
-    this.image = `${this.imageBASEurl}${movie.backdrop_path ?? ''}`;
-    this.title = movie.title ?? '';
-    const overview = movie.overview ?? '';
-    this.desc = overview ? `${overview.slice(0, 150)} ...` : '';
-    this.rate = movie.vote_average ?? null;
-    this.genre = movie.genre_ids
-      .map((id) => this.GenreList[id])
-      .filter((name): name is string => Boolean(name))
-      .join(' - ');
-    this.mId = movie.id ?? null;
-  }
-
-  getMovieWithId(index: number): void {
-    this.setHeader(index);
+  onChangeMovieCard(md: MovieItemDetails): void {
+    if (!md) return;
+    this.image = `${this.imageBASEurl}${md.backdrop_path ?? ''}`;
+    this.title = md.title;
+    this.desc = `${md.overview.slice(0, 150)}...`;
+    this.mId = md.id;
   }
 
   routeWithId(movieId: number | null): void {
@@ -113,7 +85,7 @@ export class HomeComponent implements OnInit {
       return;
     }
     localStorage.setItem('mId', movieId.toString());
-    this.router.navigateByUrl('/movie/details');
+    this.router.navigateByUrl(`/movie/${movieId}`);
   }
 
   routeForBooking(id: number | null, title: string): void {
@@ -123,6 +95,19 @@ export class HomeComponent implements OnInit {
     localStorage.setItem('bookId', id.toString());
     sessionStorage.setItem('mTitle', title);
     this.router.navigateByUrl('/booking');
+  }
+
+  getGenres(allGenres: GenresItem[], ids: number[], max: number = 2): string {
+    const names: string[] = [];
+    for (const id of ids) {
+      const match = allGenres.find((g) => g.id === id);
+      if (match) {
+        names.push(match.name);
+        if (names.length === max) break; // stop at max
+      }
+    }
+
+    return names.join(', ');
   }
 
   onError(e: any) {

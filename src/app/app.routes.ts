@@ -12,6 +12,7 @@ import { authGuard } from './guards/auth.guard';
 export const appRoutes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'movie/details', component: DetailsComponent },
+  { path: 'movie/:id', component: DetailsComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'login', component: LoginComponent },
   { path: 'booking', component: BookingComponent },

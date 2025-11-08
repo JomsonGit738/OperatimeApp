@@ -1,7 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ApiservicesService } from '../services/apiservices.service';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
+import { catchError, filter, map, Observable, of, switchMap } from 'rxjs';
+import {
+  FullMovieItemDetails,
+  MovieViewModel,
+} from 'src/shared/models/movie.interface';
+import { LoaderComponent } from 'src/shared/components/loader/loader.component';
 
 @Component({
   selector: 'app-details',
@@ -9,62 +16,61 @@ import { DomSanitizer } from '@angular/platform-browser';
   styleUrls: ['./details.component.css'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [CommonModule, LoaderComponent],
 })
 export class DetailsComponent implements OnInit {
-
-  movieObject:any = []
-  movieVideos:any = []
-  rate:any = 0
-  starring:any = ''
-  director:any = ''
-  trailerKey:any = ''
-  imageBASEurl:any = 'https://image.tmdb.org/t/p/original'
+  imageBASEurl: any = 'https://image.tmdb.org/t/p/original';
+  movie$!: Observable<MovieViewModel>;
 
   constructor(
-    private api:ApiservicesService,
-    private sanitizer:DomSanitizer,
-    private readonly cdr: ChangeDetectorRef
-  ){}
-
+    private api: ApiservicesService,
+    private sanitizer: DomSanitizer,
+    private readonly route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
-    this.getFull()
+    this.movie$ = this.route.paramMap.pipe(
+      map((params) => params.get('id')),
+      filter((id): id is string => !!id),
+      switchMap((id) => this.api.getFull<FullMovieItemDetails>(id)),
+      map((res) => this.toViewModel(res)),
+      catchError((err) => {
+        console.error(err);
+        return of(null as any);
+      })
+    );
   }
 
+  private toViewModel(res: FullMovieItemDetails): MovieViewModel {
+    // rate
+    const rate = res.vote_average?.toString().slice(0, 3) || '0';
 
-  getFull(){
-    const item = localStorage.getItem("mId")
-    this.api.getFull(item).subscribe({
-      next:(res:any)=>{     
-        //console.log(res);
-        this.movieObject = res
-        //rate
-        const r = this.movieObject.vote_average
-        this.rate = r.toString().slice(0,3)
-        //starring 
-        let n  = ''
-        for(let s of this.movieObject.casts.cast.slice(0,10)){
-          n += s.name + ', '
-        }
-        this.starring = n
-        //director
-        let d = this.movieObject.casts.crew.filter((j:any)=>j.job == 'Director')
-        this.director = d[0].name
-        //Trailer
-        let t = this.movieObject.videos.results.filter((a:any)=>a.type == 'Trailer')
-        if(t){
-          //this.trailerKey = `https://www.youtube.com/embed/${t[0].key}?&theme=dark&color=white&rel=0` 
-          this.trailerKey = this.sanitizer.bypassSecurityTrustResourceUrl(`https://www.youtube.com/embed/${t[0].key}?&theme=dark&color=white&rel=0`)
-        //console.log(this.trailerKey);
-        }
-        this.cdr.markForCheck();
-        
-        
-      },error:(err:any)=>{
-        console.log(err);
-        
-      }
-    })
+    // starring (max 10)
+    const starring = (res.casts?.cast || [])
+      .slice(0, 10)
+      .map((c) => c.name)
+      .join(', ');
+
+    // director
+    const director =
+      (res.casts?.crew || []).find((m) => m.job === 'Director')?.name || '';
+
+    // trailer
+    const trailer = (res.videos?.results || []).find(
+      (v) => v.type === 'Trailer'
+    );
+    const trailerUrl = trailer
+      ? this.sanitizer.bypassSecurityTrustResourceUrl(
+          `https://www.youtube.com/embed/${trailer.key}?&theme=dark&color=white&rel=0`
+        )
+      : null;
+
+    return {
+      ...res,
+      rate,
+      starring,
+      director,
+      trailerUrl,
+    };
   }
 }

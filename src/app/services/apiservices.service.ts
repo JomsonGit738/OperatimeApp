@@ -98,12 +98,12 @@ export class ApiservicesService {
     });
   }
 
-  getFull(id: string | number | null): Observable<unknown> {
+  getFull<T>(id: string): Observable<T> {
     const params = new HttpParams()
       .set('api_key', '3c0ea98d6c289e527bbea3ad9348c7b7')
       .set('append_to_response', 'videos,casts');
 
-    return this.http.get(this.buildTmdbUrl(`movie/${id}`), { params });
+    return this.http.get<T>(this.buildTmdbUrl(`movie/${id}`), { params });
   }
 
   signUp(

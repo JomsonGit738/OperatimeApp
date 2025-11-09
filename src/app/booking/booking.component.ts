@@ -27,6 +27,12 @@ import {
 } from 'rxjs';
 import { ServerResponse } from 'src/shared/models/common.interface';
 
+interface Seat {
+  id: number;
+  occupied: boolean;
+  selected: boolean;
+}
+
 @Component({
   selector: 'app-booking',
   templateUrl: './booking.component.html',
@@ -44,19 +50,22 @@ export class BookingComponent implements OnInit {
   color: ThemePalette = 'warn';
   payBoolean: boolean = false;
   today: any = '';
-  UserSelectedSeat: any = 0;
+  UserSelectedSeat: number = 0;
   perSeatAmount: number = 5;
+  readonly totalSeatCount = 48;
+  readonly seatsPerRow = 8;
   totalSeatAmount: number = 0;
   newDate = new Date();
   imageBASEurl: any = 'https://image.tmdb.org/t/p/original';
   image: any = '';
   rate: any = 0;
   movie: any = [];
-  seletedSeats: any = [];
-  seats: any = [];
-  seater: any = [];
+  seletedSeats: string[] = [];
+  seats: Seat[] = [];
+  seatRows: Seat[][] = [];
+  seater: string[] = [];
   seatsFromServer: any = [];
-  newArray: any = [];
+  newArray: number[] = [];
   movieID = '';
   movieTitle = '';
 
@@ -90,10 +99,7 @@ export class BookingComponent implements OnInit {
     private myToast: NgToastService,
     private route: ActivatedRoute,
     private readonly cdr: ChangeDetectorRef
-  ) {
-    // console.log(this.route.snapshot.params['id']);
-    // console.log(this.route.snapshot.queryParams['title']);
-  }
+  ) {}
 
   ngOnInit(): void {
     this.getSeats();
@@ -118,7 +124,7 @@ export class BookingComponent implements OnInit {
   //seat configuration
   getSeats() {
     //set date of today in the bill
-    let weekday = [
+    const weekday = [
       'Sunday',
       'Monday',
       'Tuesday',
@@ -130,21 +136,7 @@ export class BookingComponent implements OnInit {
     this.today =
       weekday.toUpperCase() + ' • ' + new Date().toLocaleDateString('en-GB');
 
-    const toggleSelected = (e: any) => {
-      if (e.target.classList.toggle('selected')) {
-        this.UserSelectedSeat++;
-        this.totalSeatAmount += this.perSeatAmount;
-      } else {
-        this.UserSelectedSeat--;
-        this.totalSeatAmount -= this.perSeatAmount;
-      }
-    };
-
-    this.seats = Array.from(document.getElementsByClassName('seat'));
-    //console.log(seats[0].getAttribute('value'));
-    for (let seat of this.seats) {
-      seat.addEventListener('click', toggleSelected);
-    }
+    this.initializeSeatLayout();
   }
 
   //from backend
@@ -159,68 +151,47 @@ export class BookingComponent implements OnInit {
             tempArray.push(s.seats);
           }
           //console.log(tempArray);
-          this.newArray = tempArray.flat();
+          this.newArray = tempArray.flat().map((seat) => Number(seat));
           this.seatPusher();
         } else {
           console.log('no seats booked, yet...');
         }
         this.cdr.markForCheck();
+        this.initConfig();
       }),
       catchError((e) => {
         console.error(e);
         return EMPTY;
       })
     );
-
-    // .subscribe({
-    //   next: (res: any) => {
-    //     if (res != null) {
-    //       this.seatsFromServer = res;
-    //       //getting seats from array
-    //       const tempArray = [];
-    //       for (let s of this.seatsFromServer.userseats) {
-    //         tempArray.push(s.seats);
-    //       }
-    //       //console.log(tempArray);
-
-    //       this.newArray = tempArray.flat();
-    //       this.seatPusher();
-    //     } else {
-    //       console.log('no seats booked, yet...');
-    //     }
-    //     this.cdr.markForCheck();
-    //   },
-    //   error: (err: any) => {
-    //     console.log(err);
-    //   },
-    // });
-    // //paypal initialization
-    // this.initConfig();
   }
 
   seatPusher() {
-    const tseats = Array.from(document.getElementsByClassName('seat'));
-    this.newArray.sort((a: any, b: any) => a - b);
-    let i = 0;
-    tseats.forEach((seat: any) => {
-      if (seat.getAttribute('value') == this.newArray[i]) {
-        seat.classList.add('occupied');
-        i = i + 1;
+    if (!this.seats.length) {
+      this.initializeSeatLayout();
+    }
+    const occupiedSeatIds = new Set<number>(this.newArray);
+    this.seater = [...occupiedSeatIds].map((seatId) => seatId.toString());
+
+    this.seats.forEach((seat) => {
+      const isOccupied = occupiedSeatIds.has(seat.id);
+      seat.occupied = isOccupied;
+      if (isOccupied) {
+        seat.selected = false;
       }
     });
+
+    this.UserSelectedSeat = this.seats.filter((seat) => seat.selected).length;
+    this.totalSeatAmount = this.UserSelectedSeat * this.perSeatAmount;
+    this.buildSeatRows();
   }
 
   seatLocked() {
     //getting seat numbers from user selection
 
-    this.seats.forEach((seat: any) => {
-      if (seat.classList.contains('selected')) {
-        //seat.classList.add('occupied')
-        //seat.classList.remove('selected')
-        //console.log(seat.getAttribute('value'));
-        this.seletedSeats.push(seat.getAttribute('value'));
-      }
-    });
+    this.seletedSeats = this.seats
+      .filter((seat) => seat.selected)
+      .map((seat) => seat.id.toString());
 
     //if ticket counter is closed
     var closingHour = new Date();
@@ -273,9 +244,47 @@ export class BookingComponent implements OnInit {
     this.seatContainer = false;
   }
 
+  onSeatToggle(seat: Seat) {
+    if (seat.occupied || this.seatContainer) {
+      return;
+    }
+    seat.selected = !seat.selected;
+    this.UserSelectedSeat += seat.selected ? 1 : -1;
+    this.totalSeatAmount += seat.selected
+      ? this.perSeatAmount
+      : -this.perSeatAmount;
+  }
+
+  trackRow(index: number): number {
+    return index;
+  }
+
+  trackSeat(_index: number, seat: Seat): number {
+    return seat.id;
+  }
+
+  private initializeSeatLayout() {
+    this.seats = Array.from({ length: this.totalSeatCount }, (_, index) => ({
+      id: index + 1,
+      occupied: false,
+      selected: false,
+    }));
+    this.UserSelectedSeat = 0;
+    this.totalSeatAmount = 0;
+    this.buildSeatRows();
+  }
+
+  private buildSeatRows() {
+    const rows: Seat[][] = [];
+    for (let i = 0; i < this.seats.length; i += this.seatsPerRow) {
+      rows.push(this.seats.slice(i, i + this.seatsPerRow));
+    }
+    this.seatRows = rows;
+  }
+
   //routing view to details component for Details of Movie
   routeWithId(id: string) {
-    localStorage.setItem('mId', id);
+    // localStorage.setItem('mId', id);
     this.router.navigateByUrl(`/movie/${id}`);
   }
 
@@ -374,9 +383,17 @@ export class BookingComponent implements OnInit {
     const seats = this.seletedSeats.filter((val: any) => {
       return this.seater.indexOf(val) == -1;
     });
-
-    //OperaId
     let operaId = this.movie.id.toString() + '@' + currentDate;
+    console.log(
+      currentDate,
+      operaId,
+      movietitle,
+      seats,
+      email,
+      currentTime,
+      mimage
+    );
+    //OperaId
 
     this.api
       .seatBooking(

@@ -39,65 +39,18 @@
       <div class="screen">
         <h6>Your Screen is Here</h6>
       </div>
-      <div class="row">
-        <div id="seat" class="seat" value="1"></div>
-        <div id="seat" class="seat" value="2"></div>
-        <div id="seat" class="seat" value="3"></div>
-        <div id="seat" class="seat" value="4"></div>
-        <div id="seat" class="seat" value="5"></div>
-        <div id="seat" class="seat" value="6"></div>
-        <div id="seat" class="seat" value="7"></div>
-        <div id="seat" class="seat" value="8"></div>
-      </div>
-      <div class="row">
-        <div id="seat" class="seat" value="9"></div>
-        <div id="seat" class="seat" value="10"></div>
-        <div id="seat" class="seat" value="11"></div>
-        <div id="seat" class="seat" value="12"></div>
-        <div id="seat" class="seat" value="13"></div>
-        <div id="seat" class="seat" value="14"></div>
-        <div id="seat" class="seat" value="15"></div>
-        <div id="seat" class="seat" value="16"></div>
-      </div>
-      <div class="row">
-        <div id="seat" class="seat" value="17"></div>
-        <div id="seat" class="seat" value="18"></div>
-        <div id="seat" class="seat" value="19"></div>
-        <div id="seat" class="seat" value="20"></div>
-        <div id="seat" class="seat" value="21"></div>
-        <div id="seat" class="seat" value="22"></div>
-        <div id="seat" class="seat" value="23"></div>
-        <div id="seat" class="seat" value="24"></div>
-      </div>
-      <div class="row">
-        <div id="seat" class="seat" value="25"></div>
-        <div id="seat" class="seat" value="26"></div>
-        <div id="seat" class="seat" value="27"></div>
-        <div id="seat" class="seat" value="28"></div>
-        <div id="seat" class="seat" value="29"></div>
-        <div id="seat" class="seat" value="30"></div>
-        <div id="seat" class="seat" value="31"></div>
-        <div id="seat" class="seat" value="32"></div>
-      </div>
-      <div class="row">
-        <div id="seat" class="seat" value="33"></div>
-        <div id="seat" class="seat" value="34"></div>
-        <div id="seat" class="seat" value="35"></div>
-        <div id="seat" class="seat" value="36"></div>
-        <div id="seat" class="seat" value="37"></div>
-        <div id="seat" class="seat" value="38"></div>
-        <div id="seat" class="seat" value="39"></div>
-        <div id="seat" class="seat" value="40"></div>
-      </div>
-      <div class="row">
-        <div id="seat" class="seat" value="41"></div>
-        <div id="seat" class="seat" value="42"></div>
-        <div id="seat" class="seat" value="43"></div>
-        <div id="seat" class="seat" value="44"></div>
-        <div id="seat" class="seat" value="45"></div>
-        <div id="seat" class="seat" value="46"></div>
-        <div id="seat" class="seat" value="47"></div>
-        <div id="seat" class="seat" value="48"></div>
+      <div class="row" *ngFor="let seatRow of seatRows; trackBy: trackRow">
+        <div
+          class="seat"
+          *ngFor="let seat of seatRow; trackBy: trackSeat"
+          [class.selected]="seat.selected"
+          [class.occupied]="seat.occupied"
+          (click)="onSeatToggle(seat)"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="'Seat ' + seat.id"
+          [attr.aria-disabled]="seat.occupied || seatContainer ? true : null"
+        ></div>
       </div>
       <!-- seat description -->
       <ul class="showcase">

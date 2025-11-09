@@ -6,7 +6,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { ApiservicesService } from '../services/apiservices.service';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgToastService } from 'ng-angular-popup';
 import {
   IPayPalConfig,
@@ -15,6 +15,17 @@ import {
 } from 'ngx-paypal';
 import { ThemePalette } from '@angular/material/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import {
+  catchError,
+  combineLatest,
+  EMPTY,
+  filter,
+  forkJoin,
+  map,
+  switchMap,
+  tap,
+} from 'rxjs';
+import { ServerResponse } from 'src/shared/models/common.interface';
 
 @Component({
   selector: 'app-booking',
@@ -46,17 +57,62 @@ export class BookingComponent implements OnInit {
   seater: any = [];
   seatsFromServer: any = [];
   newArray: any = [];
+  movieID = '';
+  movieTitle = '';
+
+  // stream of { id, title }
+  readonly routeParams$ = combineLatest([
+    this.route.paramMap.pipe(
+      map((params) => params.get('id')),
+      filter((id): id is string => !!id)
+    ),
+    this.route.queryParamMap.pipe(
+      map((q) => q.get('title')),
+      filter((title): title is string => !!title)
+    ),
+  ]).pipe(map(([id, title]) => ({ id, title })));
+
+  // call both APIs once we have id + title
+  readonly data$ = this.routeParams$.pipe(
+    switchMap(({ id, title }) => {
+      console.log(id, title);
+      return forkJoin({
+        // adjust to your real methods:
+        seats: this.getBookedSeats(title),
+        movie: this.loadBookingMovie(id),
+      });
+    })
+  );
+
   constructor(
     private api: ApiservicesService,
     private router: Router,
     private myToast: NgToastService,
+    private route: ActivatedRoute,
     private readonly cdr: ChangeDetectorRef
-  ) {}
+  ) {
+    // console.log(this.route.snapshot.params['id']);
+    // console.log(this.route.snapshot.queryParams['title']);
+  }
 
   ngOnInit(): void {
-    this.loadBookingMovie();
-    this.getBookedSeats();
     this.getSeats();
+  }
+
+  //loading movie details in booking component
+  loadBookingMovie(id: string) {
+    // let id = localStorage.getItem('bookId');
+    return this.api.getMovieById(id).pipe(
+      tap((res) => {
+        this.movie = res;
+        this.image = this.imageBASEurl + this.movie.poster_path;
+        // this.cdr.markForCheck();
+      }),
+      catchError((e) => {
+        console.error(e);
+        return EMPTY;
+      })
+    );
   }
 
   //seat configuration
@@ -92,34 +148,54 @@ export class BookingComponent implements OnInit {
   }
 
   //from backend
-  getBookedSeats() {
-    const title = sessionStorage.getItem('mTitle');
-    //console.log(title);
-
-    this.api.getBookedSeats(title).subscribe({
-      next: (res: any) => {
-        if (res != null) {
-          this.seatsFromServer = res;
+  getBookedSeats(title: string) {
+    return this.api.getBookedSeats<any>(title).pipe(
+      tap((res: ServerResponse<any>) => {
+        if (res.status === 200) {
+          this.seatsFromServer = res.data;
           //getting seats from array
           const tempArray = [];
           for (let s of this.seatsFromServer.userseats) {
             tempArray.push(s.seats);
           }
           //console.log(tempArray);
-
           this.newArray = tempArray.flat();
           this.seatPusher();
         } else {
           console.log('no seats booked, yet...');
         }
         this.cdr.markForCheck();
-      },
-      error: (err: any) => {
-        console.log(err);
-      },
-    });
-    //paypal initialization
-    this.initConfig();
+      }),
+      catchError((e) => {
+        console.error(e);
+        return EMPTY;
+      })
+    );
+
+    // .subscribe({
+    //   next: (res: any) => {
+    //     if (res != null) {
+    //       this.seatsFromServer = res;
+    //       //getting seats from array
+    //       const tempArray = [];
+    //       for (let s of this.seatsFromServer.userseats) {
+    //         tempArray.push(s.seats);
+    //       }
+    //       //console.log(tempArray);
+
+    //       this.newArray = tempArray.flat();
+    //       this.seatPusher();
+    //     } else {
+    //       console.log('no seats booked, yet...');
+    //     }
+    //     this.cdr.markForCheck();
+    //   },
+    //   error: (err: any) => {
+    //     console.log(err);
+    //   },
+    // });
+    // //paypal initialization
+    // this.initConfig();
   }
 
   seatPusher() {
@@ -195,21 +271,6 @@ export class BookingComponent implements OnInit {
     this.seletedSeats = [];
     this.payBoolean = false;
     this.seatContainer = false;
-  }
-
-  //loading movie details in booking component
-  loadBookingMovie() {
-    let id = localStorage.getItem('bookId');
-    this.api.getMovieById(id).subscribe({
-      next: (res: any) => {
-        this.movie = res;
-        this.image = this.imageBASEurl + this.movie.poster_path;
-        this.cdr.markForCheck();
-      },
-      error: (err: any) => {
-        console.log(err);
-      },
-    });
   }
 
   //routing view to details component for Details of Movie

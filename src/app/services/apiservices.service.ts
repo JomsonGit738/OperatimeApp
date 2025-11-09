@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import {
   ResponseData,
   ResponseData2,
+  ServerResponse,
 } from 'src/shared/models/common.interface';
 
 export interface MovieSummary {
@@ -35,8 +36,8 @@ export interface GenresResponse {
 export class ApiservicesService {
   readonly sessionUser = new BehaviorSubject<string>('');
 
-  private readonly baseUrl = 'https://operatimeserver-2023.onrender.com';
-  // private readonly baseUrl = 'http://localhost:3000';
+  // private readonly baseUrl = 'https://operatimeserver-2023.onrender.com';
+  private readonly baseUrl = 'http://localhost:3000';
   readonly imageBASEurl = 'https://image.tmdb.org/t/p/';
   private readonly tmdbApiBase = 'https://api.themoviedb.org/3';
 
@@ -72,8 +73,8 @@ export class ApiservicesService {
     });
   }
 
-  getMovieById(id: string | number | null): Observable<MovieSummary> {
-    return this.http.get<MovieSummary>(this.buildTmdbUrl(`movie/${id}`), {
+  getMovieById(id: string | number | null): Observable<any> {
+    return this.http.get(this.buildTmdbUrl(`movie/${id}`), {
       headers: this.tmdbHeaders,
     });
   }
@@ -136,8 +137,8 @@ export class ApiservicesService {
     return this.http.post(`${this.baseUrl}/user/details`, body);
   }
 
-  getBookedSeats(id: string | null): Observable<unknown> {
-    return this.http.get(`${this.baseUrl}/getseats/${id}`);
+  getBookedSeats<T>(id: string | null): Observable<ServerResponse<T>> {
+    return this.http.get<ServerResponse<T>>(`${this.baseUrl}/getseats/${id}`);
   }
 
   seatBooking(

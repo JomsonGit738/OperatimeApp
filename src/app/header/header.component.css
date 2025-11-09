@@ -1,51 +1,71 @@
-.loginbutton{
-    background-color: rgb(200, 1, 1);
-    color: white;
-    border-radius: 3px;
-    margin-right: 10px;
-    border: none;
-    padding: 5px 20px;
-    border-radius: 10px;
-    font-weight: bold;
+.loginbutton {
+  background-color: rgb(200, 1, 1);
+  color: white;
+  border-radius: 3px;
+  margin-right: 10px;
+  border: none;
+  padding: 5px 20px;
+  border-radius: 3px;
+  font-weight: normal;
 }
-.signupbutton{
-    background-color: rgb(255, 255, 255);
-    color: rgb(0, 0, 0);
-    border-radius: 3px;
-    margin-right: 10px;
-    border: none;
-    padding: 5px 15px;
-    border-radius: 10px;
+.signupbutton {
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  border-radius: 3px;
+  margin-right: 10px;
+  border: none;
+  padding: 5px 15px;
+  border-radius: 3px;
 }
 
-.userDiv{
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.loginbutton,
+.signupbutton {
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
-.userName{
-    color: white;
-    font-size: 13px;
-    margin: 0;
+
+.loginbutton:hover {
+  background-color: rgb(230, 40, 40);
+  color: white;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  transform: translateY(-1px);
 }
-.userIcon{
-    margin-left: 10px;
-    background-color: white;
-    color: red;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+
+.signupbutton:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: rgb(200, 1, 1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
 }
-.userIcon h5{
-    margin: 0;
-    font-size: 20px;
+
+.userDiv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.userImage{
-    width: 35px;
-    margin-left: 10px;
-    border-radius: 50%;
-    outline: 3px solid white;
+.userName {
+  color: white;
+  font-size: 13px;
+  margin: 0;
+}
+.userIcon {
+  margin-left: 10px;
+  background-color: white;
+  color: red;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.userIcon h5 {
+  margin: 0;
+  font-size: 20px;
+}
+.userImage {
+  width: 35px;
+  margin-left: 10px;
+  border-radius: 50%;
+  outline: 3px solid white;
 }

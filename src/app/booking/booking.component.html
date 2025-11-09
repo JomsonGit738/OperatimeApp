@@ -1,170 +1,229 @@
-<mat-progress-bar *ngIf="progressEvent" [color]="color" mode="indeterminate"></mat-progress-bar>
-<div class="bookingContainer">
-    <!-- https://image.tmdb.org/t/p/w1280/fiVW06jE7z9YnO4trhaMEdclSiC.jpg -->
-    
-    <!-- details container -->
-    <div class="detailsContainer">
-        <div class="ag-courses_item">
-            <div  class="ag-courses-item_link" [ngStyle]="{ 'background-image': 'url('+this.image+')'}">
-              <div class="ag-courses-item_bg"></div>
-      
-              <div class="deta" (click)="routeWithId(movie.id)">
-                  
-                    <i  class="fa-solid fa-circle-info fa-2xl" style="color: #ffffff; z-index: 3; cursor: pointer;"></i>
-                  <!-- <div class="ag-courses-item_date-box">
+<mat-progress-bar
+  *ngIf="progressEvent"
+  [color]="color"
+  mode="indeterminate"
+></mat-progress-bar>
+<div *ngIf="data$ | async as movieData" class="bookingContainer">
+  <!-- https://image.tmdb.org/t/p/w1280/fiVW06jE7z9YnO4trhaMEdclSiC.jpg -->
+
+  <!-- details container -->
+  <div class="detailsContainer">
+    <div class="ag-courses_item">
+      <div
+        class="ag-courses-item_link"
+        [ngStyle]="{ 'background-image': 'url(' + this.image + ')' }"
+      >
+        <div class="ag-courses-item_bg"></div>
+
+        <div class="deta" (click)="routeWithId(movie.id)">
+          <i
+            class="fa-solid fa-circle-info fa-2xl"
+            style="color: #ffffff; z-index: 3; cursor: pointer"
+          ></i>
+          <!-- <div class="ag-courses-item_date-box">
                     {{rate}}
                   </div>
                   <div class="genres" *ngFor="let g of movie.genres; let i = index">
                     {{"• "+g.name}}
                   </div>
                   <div class="overview">{{movie.overview}}</div> -->
-              </div>
-            </div>
-        </div> 
-    </div>
-   <div class="bill">
-        <!-- seat container -->
-        <div class="seatContainer" [class.disabled]="seatContainer">
-            <h4>Select your seats</h4>
-            <p>Please make yourself comfortable, select your seats</p>
-            <div class="screen">
-                <h6>Your Screen is Here</h6>
-            </div>
-            <div class="row">
-                <div id="seat" class="seat" value="1"></div>
-                <div id="seat" class="seat" value="2"></div>
-                <div id="seat" class="seat" value="3"></div>
-                <div id="seat" class="seat" value="4"></div>
-                <div id="seat" class="seat" value="5"></div>
-                <div id="seat" class="seat" value="6"></div>
-                <div id="seat" class="seat" value="7"></div>
-                <div id="seat" class="seat" value="8"></div>
-            </div>
-            <div class="row">
-                <div id="seat" class="seat" value="9"></div>
-                <div id="seat" class="seat" value="10"></div>
-                <div id="seat" class="seat" value="11"></div>
-                <div id="seat" class="seat" value="12"></div>
-                <div id="seat" class="seat" value="13"></div>
-                <div id="seat" class="seat" value="14"></div>
-                <div id="seat" class="seat" value="15"></div>
-                <div id="seat" class="seat" value="16"></div>
-            </div>
-            <div class="row">
-                <div id="seat" class="seat" value="17"></div>
-                <div id="seat" class="seat" value="18"></div>
-                <div id="seat" class="seat" value="19"></div>
-                <div id="seat" class="seat" value="20"></div>
-                <div id="seat" class="seat" value="21"></div>
-                <div id="seat" class="seat" value="22"></div>
-                <div id="seat" class="seat" value="23"></div>
-                <div id="seat" class="seat" value="24"></div>
-            </div>
-            <div class="row">
-                <div id="seat" class="seat" value="25"></div>
-                <div id="seat" class="seat" value="26"></div>
-                <div id="seat" class="seat" value="27"></div>
-                <div id="seat" class="seat" value="28"></div>
-                <div id="seat" class="seat" value="29"></div>
-                <div id="seat" class="seat" value="30"></div>
-                <div id="seat" class="seat" value="31"></div>
-                <div id="seat" class="seat" value="32"></div>
-            </div>
-            <div class="row">
-                <div id="seat" class="seat" value="33"></div>
-                <div id="seat" class="seat" value="34"></div>
-                <div id="seat" class="seat" value="35"></div>
-                <div id="seat" class="seat" value="36"></div>
-                <div id="seat" class="seat" value="37"></div>
-                <div id="seat" class="seat" value="38"></div>
-                <div id="seat" class="seat" value="39"></div>
-                <div id="seat" class="seat" value="40"></div>
-            </div>
-            <div class="row">
-                <div id="seat" class="seat" value="41"></div>
-                <div id="seat" class="seat" value="42"></div>
-                <div id="seat" class="seat" value="43"></div>
-                <div id="seat" class="seat" value="44"></div>
-                <div id="seat" class="seat" value="45"></div>
-                <div id="seat" class="seat" value="46"></div>
-                <div id="seat" class="seat" value="47"></div>
-                <div id="seat" class="seat" value="48"></div>
-            </div>
-           <!-- seat description -->
-           <ul class="showcase"> 
-            <li>
-                <div id="seat" class="seatDesc"></div>
-                <small class="status" style="font-size: 12px;">N/A</small>
-            </li>
-            <li>
-                <div id="seat" class="seatDesc" style="background-color: rgba(41, 255, 45, 0.659);"></div>
-                <small class="status" style="font-size: 12px;">Selected</small>
-            </li>
-            <li>
-                <div id="seat" class="seatDesc" style="background-color: rgba(255, 255, 255, 0.889);"></div>
-                <small class="status" style="font-size: 12px;">Occupied</small>
-            </li>
-        </ul>
-            <!-- <button (click)="seatLocked()" type="button">submit</button> -->
-        </div>
-        <!-- buy -->
-        <div class="seatBilling">
-            <div class="bookDetails">
-                    <div style="display: flex; gap: 15px; margin-bottom: 10px;">
-                        <img width="50px" [src]="image" alt="">
-                        <h4>{{movie.title}}</h4>
-                    </div>
-                    <p class="date">{{today}}</p>
-                    <div class="time">
-                        <h6>Time:</h6>
-                        <p>08:00 PM</p>
-                    </div>
-                    <div class="rate seats">
-                        <p>seats:</p>
-                        <p>{{UserSelectedSeat}}</p>
-                    </div>
-                    <div class="rate">
-                        <p>Rate(per seat):</p>
-                        <p>$ {{perSeatAmount}}</p>
-                    </div>
-                    <div class="totalAmount">
-                        <p>Total Amount:</p>
-                        <h5>$ {{totalSeatAmount}}</h5>
-                    </div>
-                    <button *ngIf="!payBoolean" (click)="seatLocked()" class="proceed">Pay</button>
-                    <ngx-paypal *ngIf="payBoolean" [config]="payPalConfig" style="margin-top: auto;">
-                    </ngx-paypal>
-                    <button *ngIf="payBoolean" (click)="cancelLocked()" class="proceed">Cancel</button>
-                    <p *ngIf="!payBoolean" class="terms"><i class="fa-sharp fa-solid fa-circle-info"></i> By clicking Pay, you are agreeing to the <a class="conditions" data-bs-toggle="modal" data-bs-target="#staticBackdrop">terms and conditions</a> and privacy policies of Operatime</p>
-            </div>
-        </div>
-   </div>
-</div>
-
-
-<!--Bootstrap Modal for terms and conditions -->
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="staticBackdropLabel">Terms & Conditions</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p style="font-size: 12px;">
-            1. ticket counter is closed at 8:00 PM. opening at 12:00 AM! <br>
-            2. Online users can only book 4 seats at a time<br>
-            3. Children above the age of 3 years require tickets for `U` or `U/A` rated movies. <br>
-            4. In case a ticket is lost or misplaced, a duplicate ticket cannot be issued.<br>
-            5. Tickets once purchased cannot be cancelled, exchanged or refunded.<br>
-            6. Guest Agrees to be contacted by INOX Management for the purpose of seeking feedback for service improvement.<br>
-            7. Decision(s) taken by INOX shall be final and binding, Rights of admission reserved.<br>
-            8. Outside food and beverages are not allowed inside the cinema premises.<br>
-            9. Patrons under the influence of alcohol or drugs will not be allowed inside the Cinema Premises.<br></p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" data-bs-dismiss="modal">Okay, I understood</button>
         </div>
       </div>
     </div>
   </div>
+  <div class="bill">
+    <!-- seat container -->
+    <div class="seatContainer" [class.disabled]="seatContainer">
+      <h4>Select your seats</h4>
+      <p>Please make yourself comfortable, select your seats</p>
+      <div class="screen">
+        <h6>Your Screen is Here</h6>
+      </div>
+      <div class="row">
+        <div id="seat" class="seat" value="1"></div>
+        <div id="seat" class="seat" value="2"></div>
+        <div id="seat" class="seat" value="3"></div>
+        <div id="seat" class="seat" value="4"></div>
+        <div id="seat" class="seat" value="5"></div>
+        <div id="seat" class="seat" value="6"></div>
+        <div id="seat" class="seat" value="7"></div>
+        <div id="seat" class="seat" value="8"></div>
+      </div>
+      <div class="row">
+        <div id="seat" class="seat" value="9"></div>
+        <div id="seat" class="seat" value="10"></div>
+        <div id="seat" class="seat" value="11"></div>
+        <div id="seat" class="seat" value="12"></div>
+        <div id="seat" class="seat" value="13"></div>
+        <div id="seat" class="seat" value="14"></div>
+        <div id="seat" class="seat" value="15"></div>
+        <div id="seat" class="seat" value="16"></div>
+      </div>
+      <div class="row">
+        <div id="seat" class="seat" value="17"></div>
+        <div id="seat" class="seat" value="18"></div>
+        <div id="seat" class="seat" value="19"></div>
+        <div id="seat" class="seat" value="20"></div>
+        <div id="seat" class="seat" value="21"></div>
+        <div id="seat" class="seat" value="22"></div>
+        <div id="seat" class="seat" value="23"></div>
+        <div id="seat" class="seat" value="24"></div>
+      </div>
+      <div class="row">
+        <div id="seat" class="seat" value="25"></div>
+        <div id="seat" class="seat" value="26"></div>
+        <div id="seat" class="seat" value="27"></div>
+        <div id="seat" class="seat" value="28"></div>
+        <div id="seat" class="seat" value="29"></div>
+        <div id="seat" class="seat" value="30"></div>
+        <div id="seat" class="seat" value="31"></div>
+        <div id="seat" class="seat" value="32"></div>
+      </div>
+      <div class="row">
+        <div id="seat" class="seat" value="33"></div>
+        <div id="seat" class="seat" value="34"></div>
+        <div id="seat" class="seat" value="35"></div>
+        <div id="seat" class="seat" value="36"></div>
+        <div id="seat" class="seat" value="37"></div>
+        <div id="seat" class="seat" value="38"></div>
+        <div id="seat" class="seat" value="39"></div>
+        <div id="seat" class="seat" value="40"></div>
+      </div>
+      <div class="row">
+        <div id="seat" class="seat" value="41"></div>
+        <div id="seat" class="seat" value="42"></div>
+        <div id="seat" class="seat" value="43"></div>
+        <div id="seat" class="seat" value="44"></div>
+        <div id="seat" class="seat" value="45"></div>
+        <div id="seat" class="seat" value="46"></div>
+        <div id="seat" class="seat" value="47"></div>
+        <div id="seat" class="seat" value="48"></div>
+      </div>
+      <!-- seat description -->
+      <ul class="showcase">
+        <li>
+          <div id="seat" class="seatDesc"></div>
+          <small class="status" style="font-size: 12px">N/A</small>
+        </li>
+        <li>
+          <div
+            id="seat"
+            class="seatDesc"
+            style="background-color: rgba(41, 255, 45, 0.659)"
+          ></div>
+          <small class="status" style="font-size: 12px">Selected</small>
+        </li>
+        <li>
+          <div
+            id="seat"
+            class="seatDesc"
+            style="background-color: rgba(255, 255, 255, 0.889)"
+          ></div>
+          <small class="status" style="font-size: 12px">Occupied</small>
+        </li>
+      </ul>
+      <!-- <button (click)="seatLocked()" type="button">submit</button> -->
+    </div>
+    <!-- buy -->
+    <div class="seatBilling">
+      <div class="bookDetails">
+        <div style="display: flex; gap: 15px; margin-bottom: 10px">
+          <img width="50px" [src]="image" alt="" />
+          <h4>{{ movie.title }}</h4>
+        </div>
+        <p class="date">{{ today }}</p>
+        <div class="time">
+          <h6>Time:</h6>
+          <p>08:00 PM</p>
+        </div>
+        <div class="rate seats">
+          <p>seats:</p>
+          <p>{{ UserSelectedSeat }}</p>
+        </div>
+        <div class="rate">
+          <p>Rate(per seat):</p>
+          <p>$ {{ perSeatAmount }}</p>
+        </div>
+        <div class="totalAmount">
+          <p>Total Amount:</p>
+          <h5>$ {{ totalSeatAmount }}</h5>
+        </div>
+        <button *ngIf="!payBoolean" (click)="seatLocked()" class="proceed">
+          Pay
+        </button>
+        <ngx-paypal
+          *ngIf="payBoolean"
+          [config]="payPalConfig"
+          style="margin-top: auto"
+        >
+        </ngx-paypal>
+        <button *ngIf="payBoolean" (click)="cancelLocked()" class="proceed">
+          Cancel
+        </button>
+        <p *ngIf="!payBoolean" class="terms">
+          <i class="fa-sharp fa-solid fa-circle-info"></i> By clicking Pay, you
+          are agreeing to the
+          <a
+            class="conditions"
+            data-bs-toggle="modal"
+            data-bs-target="#staticBackdrop"
+            >terms and conditions</a
+          >
+          and privacy policies of Operatime
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Bootstrap Modal for terms and conditions -->
+<div
+  class="modal fade"
+  id="staticBackdrop"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="staticBackdropLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">
+          Terms & Conditions
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 12px">
+          1. ticket counter is closed at 8:00 PM. opening at 12:00 AM! <br />
+          2. Online users can only book 4 seats at a time<br />
+          3. Children above the age of 3 years require tickets for `U` or `U/A`
+          rated movies. <br />
+          4. In case a ticket is lost or misplaced, a duplicate ticket cannot be
+          issued.<br />
+          5. Tickets once purchased cannot be cancelled, exchanged or
+          refunded.<br />
+          6. Guest Agrees to be contacted by INOX Management for the purpose of
+          seeking feedback for service improvement.<br />
+          7. Decision(s) taken by INOX shall be final and binding, Rights of
+          admission reserved.<br />
+          8. Outside food and beverages are not allowed inside the cinema
+          premises.<br />
+          9. Patrons under the influence of alcohol or drugs will not be allowed
+          inside the Cinema Premises.<br />
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-bs-dismiss="modal">
+          Okay, I understood
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

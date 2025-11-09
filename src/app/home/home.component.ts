@@ -80,21 +80,17 @@ export class HomeComponent implements OnInit {
     this.mId = md.id;
   }
 
-  routeWithId(movieId: number | null): void {
-    if (movieId == null) {
-      return;
-    }
-    localStorage.setItem('mId', movieId.toString());
+  routeWithId(movieId: number | null) {
     this.router.navigateByUrl(`/movie/${movieId}`);
   }
 
   routeForBooking(id: number | null, title: string): void {
-    if (id == null) {
-      return;
-    }
-    localStorage.setItem('bookId', id.toString());
-    sessionStorage.setItem('mTitle', title);
-    this.router.navigateByUrl('/booking');
+    // if (id == null) {
+    //   return;
+    // }
+    // localStorage.setItem('bookId', id.toString());
+    // sessionStorage.setItem('mTitle', title);
+    this.router.navigate([`/booking/${id}`], { queryParams: { title } });
   }
 
   getGenres(allGenres: GenresItem[], ids: number[], max: number = 2): string {
@@ -106,7 +102,6 @@ export class HomeComponent implements OnInit {
         if (names.length === max) break; // stop at max
       }
     }
-
     return names.join(', ');
   }
 

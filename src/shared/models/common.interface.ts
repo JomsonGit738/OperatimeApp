@@ -17,3 +17,9 @@ interface ResponseDates {
   maximum: string;
   minimum: string;
 }
+
+export interface ServerResponse<T> {
+  status: number;
+  message: string;
+  data: T;
+}

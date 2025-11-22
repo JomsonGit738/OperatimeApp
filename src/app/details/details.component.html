@@ -60,7 +60,10 @@
 </ng-container>
 
 <ng-template #loader>
-  <div class="d-flex align-items-center justify-content-center w-100 vh-100">
-    <app-loader></app-loader>
+  <div class="d-flex align-items-center justify-content-center w-100 vh-100 text-center">
+    <div class="d-flex flex-column align-items-center gap-3">
+      <app-loader></app-loader>
+      <p class="text-uppercase fw-semibold text-white mb-0">Loading movie details...</p>
+    </div>
   </div>
 </ng-template>

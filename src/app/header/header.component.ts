@@ -1,10 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ApiservicesService } from '../services/apiservices.service';
 import { Router } from '@angular/router';
 import { NgToastService } from 'ng-angular-popup';
 import { Subscription } from 'rxjs';
+import { SidebarService } from '../services/sidebar.service';
 
 @Component({
   selector: 'app-header',
@@ -20,21 +27,26 @@ export class HeaderComponent implements OnInit, OnDestroy {
   userImage: string | null = null;
   userImageStatus = false;
   userStatus = false;
+  isSidebarOpen = false;
   private sessionSubscription?: Subscription;
+  private sidebarSubscription?: Subscription;
 
   constructor(
     private readonly api: ApiservicesService,
     private readonly router: Router,
     private readonly toast: NgToastService,
-    private readonly cdr: ChangeDetectorRef
+    private readonly cdr: ChangeDetectorRef,
+    private readonly sidebarService: SidebarService
   ) {}
 
   ngOnInit(): void {
     this.configureSessionUser();
+    this.subscribeToSidebar();
   }
 
   ngOnDestroy(): void {
     this.sessionSubscription?.unsubscribe();
+    this.sidebarSubscription?.unsubscribe();
   }
 
   configureSessionUser(): void {
@@ -50,6 +62,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       },
     });
+  }
+
+  private subscribeToSidebar(): void {
+    this.sidebarSubscription = this.sidebarService.open$.subscribe(
+      (isOpen: boolean) => {
+        this.isSidebarOpen = isOpen;
+        this.cdr.markForCheck();
+      }
+    );
+  }
+
+  toggleSidebar(): void {
+    this.sidebarService.toggle();
   }
 
   SignOut(): void {

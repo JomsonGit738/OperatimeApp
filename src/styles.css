@@ -15,12 +15,17 @@ body{
     background-color: rgba(0, 0, 0, 0.971);
 }
 ::-webkit-scrollbar{
-    width: 0px;
-    height: 0px;
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track{
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb {
-    background-color: rgb(124, 11, 11);
+    background-color: rgb(175, 2, 2);
     border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 

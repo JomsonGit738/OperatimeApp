@@ -4,7 +4,7 @@
       class="sidebar-close"
       type="button"
       aria-label="Close navigation menu"
-      (click)="_toggleSidebar()"
+      (click)="closeSidebar()"
     >
       <i class="left-menu-icon fas fa-close fa-xl"></i>
     </button>
@@ -18,13 +18,4 @@
     </div>
   </nav>
 
-  <button
-    class="sidebar-open"
-    type="button"
-    aria-label="Open navigation menu"
-    *ngIf="!trigger"
-    (click)="_toggleSidebar()"
-  >
-    <i class="fa-solid fa-bars fa-xl"></i>
-  </button>
 </div>

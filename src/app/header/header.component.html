@@ -1,43 +1,76 @@
 <header class="p-2">
-    <div class="container">
-      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-        <div>
-            <img routerLink="" src="https://i.postimg.cc/k5nth71x/opera-time.png" alt="opera_logo_image" style="cursor: pointer;">
+  <div class="mx-4">
+    <div
+      class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start"
+    >
+      <div class="sidebar-toggle-slot me-3">
+        <ng-container *ngIf="!isSidebarOpen; else sidebarTogglePlaceholder">
+          <button
+            class="sidebar-open"
+            type="button"
+            aria-label="Open navigation menu"
+            (click)="toggleSidebar()"
+          >
+            <i class="fa-solid fa-bars fa-xl"></i>
+          </button>
+        </ng-container>
+      </div>
+      <ng-template #sidebarTogglePlaceholder>
+        <span class="sidebar-toggle-spacer" aria-hidden="true"></span>
+      </ng-template>
+      <div>
+        <img
+          routerLink=""
+          src="https://i.postimg.cc/k5nth71x/opera-time.png"
+          alt="opera_logo_image"
+          style="cursor: pointer"
+        />
+      </div>
+
+      <ul
+        class="nav ms-4 col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0"
+      >
+        <li><a class="nav-link px-2 text-white"></a></li>
+        <li><a class="nav-link px-2 text-white"></a></li>
+        <li><a class="nav-link px-2 text-white"></a></li>
+        <li><a class="nav-link px-2 text-white"></a></li>
+        <li><a routerLink="/booking" class="nav-link px-2 text-white"></a></li>
+      </ul>
+
+      <div *ngIf="!userStatus" class="text-end d-none d-lg-block">
+        <button routerLink="/login" class="loginbutton">Login</button>
+        <button routerLink="/signup" class="signupbutton">Sign up</button>
+      </div>
+
+      <!-- user status -->
+      <div *ngIf="userStatus" class="userDiv">
+        <p class="userName">Hai, {{ username ?? "" }}!</p>
+        <div *ngIf="!userImageStatus" class="userIcon">
+          <h5>{{ (username ?? "").substring(0, 1).toUpperCase() }}</h5>
         </div>
-
-        <ul class="nav ms-4 col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-          <li><a  class="nav-link px-2 text-white"></a></li>
-          <li><a  class="nav-link px-2 text-white"></a></li>
-          <li><a  class="nav-link px-2 text-white"></a></li>
-          <li><a  class="nav-link px-2 text-white"></a></li>
-          <li><a routerLink="/booking" class="nav-link px-2 text-white"></a></li>
-        </ul>
-
-        <div *ngIf="!userStatus" class="text-end">
-          <button routerLink="/login" class="loginbutton">Login</button>
-          <button routerLink="/signup" class="signupbutton">Sign up</button>
+        <img
+          *ngIf="userImageStatus"
+          class="userImage"
+          [src]="userImage ?? ''"
+          alt="user_Image"
+        />
+        <div class="btn-group">
+          <i
+            class="fa-solid fa-caret-down ms-2"
+            data-bs-toggle="dropdown"
+            data-bs-display="static"
+            aria-expanded="false"
+            style="color: #ffffff; cursor: pointer"
+          ></i>
+          <!-- dropdown hidden items -->
+          <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-lg-end">
+            <li>
+              <a routerLink="/profile" class="dropdown-item">My Profile</a>
+            </li>
+            <li><a (click)="SignOut()" class="dropdown-item">Log Out</a></li>
+          </ul>
         </div>
-
-        <!-- user status -->
-        <div *ngIf="userStatus" class="userDiv">
-          <p class="userName">Hai, {{ username ?? '' }}!</p>
-          <div *ngIf="!userImageStatus" class="userIcon">
-            <h5>{{ (username ?? '').substring(0, 1).toUpperCase() }}</h5>
-          </div>
-          <img *ngIf="userImageStatus" class="userImage" [src]="userImage ?? ''" alt="user_Image">
-          <div class="btn-group">
-            <i class="fa-solid fa-caret-down ms-2" 
-            data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false"
-            style="color: #ffffff; cursor: pointer;"></i>
-            <!-- dropdown hidden items -->
-            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-lg-end">
-              <li><a routerLink="/profile" class="dropdown-item">My Profile</a></li>
-              <li><a (click)="SignOut()" class="dropdown-item">Log Out</a></li>
-            </ul>
-          </div>
-        </div>
-        
-
       </div>
     </div>
-  </header>
+  </div>
+</header>

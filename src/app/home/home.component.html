@@ -112,13 +112,24 @@
         </div>
       </div>
     </div>
-    <div class="featured-content fp2">
-      <h1 style="color: white; font-weight: bold">The Super Mario Bros</h1>
+    <div
+      *ngIf="movieData?.homeMovies?.[19] as featuredMovie"
+      class="featured-content fp2"
+      [ngStyle]="{
+        'background-image':
+          'linear-gradient(to bottom, rgba(0,0,0,0), #151515), url(' +
+          imageBASEurl +
+          (featuredMovie.backdrop_path ||
+            featuredMovie.poster_path ||
+            '') +
+          ')'
+      }"
+    >
+      <h1 style="color: white; font-weight: bold">
+        {{ featuredMovie.title }}
+      </h1>
       <p class="featured-desc" style="max-width: 300px">
-        While working underground to fix a water main, Brooklyn plumbers—and
-        brothers—Mario and Luigi are transported down a mysterious pipe and
-        wander into a magical new world. But when the brothers are separated,
-        Mario embarks on an epic quest to find Luigi.
+        {{ featuredMovie.overview || 'Description unavailable.' }}
       </p>
     </div>
     <div class="mContainer">
@@ -157,6 +168,10 @@
 
 <ng-template #loader>
   <div class="d-flex align-items-center justify-content-center w-100 vh-100">
-    <app-loader></app-loader>
+    <div class="d-flex flex-column align-items-center justify-content-center text-center gap-3">
+      <app-loader></app-loader>
+      <p class="text-uppercase fw-semibold text-white mb-0">Loading the latest movies...</p>
+    </div>
   </div>
 </ng-template>
+

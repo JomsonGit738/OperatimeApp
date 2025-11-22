@@ -69,3 +69,34 @@
   border-radius: 50%;
   outline: 3px solid white;
 }
+
+.sidebar-open {
+  border: none;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 4px;
+  box-shadow: 0 0 24px 5px rgba(0, 0, 0, 0.85);
+}
+
+.sidebar-open:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+.sidebar-toggle-slot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 48px;
+}
+
+.sidebar-toggle-spacer {
+  display: inline-block;
+  width: 48px;
+  height: 32px;
+}

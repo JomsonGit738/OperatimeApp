@@ -33,6 +33,7 @@ export class HomeComponent implements OnInit {
   title = '';
   desc = '';
   mId: number | null = null;
+  activePosterId: number | null = null;
   readonly imageBASEurl = 'https://image.tmdb.org/t/p/original';
   combinedData!: Observable<any>;
   isLoading = signal(true);
@@ -78,6 +79,7 @@ export class HomeComponent implements OnInit {
     this.title = md.title;
     this.desc = `${md.overview.slice(0, 150)}...`;
     this.mId = md.id;
+    this.activePosterId = md.id;
   }
 
   routeWithId(movieId: number | null) {

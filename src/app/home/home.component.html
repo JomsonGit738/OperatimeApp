@@ -40,11 +40,12 @@
           <div
             class="poster"
             *ngFor="let movie of movieData?.nowPlayingsMovies?.slice(0, 4)"
+            [class.poster--active]="movie.id === activePosterId"
           >
             <img
               (click)="onChangeMovieCard(movie)"
               [src]="imageBASEurl + movie.poster_path"
-              alt=""
+              alt="{{ movie.title }}"
             />
           </div>
         </div>

@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  HostListener,
   OnDestroy,
   OnInit,
 } from '@angular/core';
@@ -28,8 +29,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
   userImageStatus = false;
   userStatus = false;
   isSidebarOpen = false;
+  isHeaderVisible = true;
+  isAtTop = true;
   private sessionSubscription?: Subscription;
   private sidebarSubscription?: Subscription;
+  private lastScrollTop = 0;
+  private readonly hideThreshold = 20;
 
   constructor(
     private readonly api: ApiservicesService,
@@ -75,6 +80,41 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   toggleSidebar(): void {
     this.sidebarService.toggle();
+  }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll(): void {
+    const currentScroll =
+      window.pageYOffset ||
+      document.documentElement.scrollTop ||
+      document.body.scrollTop ||
+      0;
+
+    const normalizedScroll = Math.max(currentScroll, 0);
+    const isAtTop = normalizedScroll <= 0;
+    const scrollDelta = normalizedScroll - this.lastScrollTop;
+    const isScrollingDown = scrollDelta > 0;
+    const hasExceededHideThreshold = Math.abs(scrollDelta) > this.hideThreshold;
+    let shouldShowHeader = this.isHeaderVisible;
+
+    if (isAtTop) {
+      shouldShowHeader = true;
+    } else if (scrollDelta < 0) {
+      shouldShowHeader = true;
+    } else if (isScrollingDown && hasExceededHideThreshold) {
+      shouldShowHeader = false;
+    }
+
+    const hasVisibilityChanged = shouldShowHeader !== this.isHeaderVisible;
+    const hasTopStateChanged = isAtTop !== this.isAtTop;
+
+    if (hasVisibilityChanged || hasTopStateChanged) {
+      this.isHeaderVisible = shouldShowHeader;
+      this.isAtTop = isAtTop;
+      this.cdr.markForCheck();
+    }
+
+    this.lastScrollTop = normalizedScroll;
   }
 
   SignOut(): void {

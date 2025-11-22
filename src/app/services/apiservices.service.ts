@@ -18,7 +18,10 @@ export interface MovieSummary {
 }
 
 export interface MoviesResponse<T = MovieSummary> {
+  page?: number;
   results: T[];
+  total_pages?: number;
+  total_results?: number;
 }
 
 export interface Genre {
@@ -86,12 +89,15 @@ export class ApiservicesService {
     );
   }
 
-  searchMovies<T = MovieSummary>(name: string): Observable<MoviesResponse<T>> {
+  searchMovies<T = MovieSummary>(
+    name: string,
+    page: number = 1
+  ): Observable<MoviesResponse<T>> {
     const params = new HttpParams()
       .set('query', name)
       .set('include_adult', 'false')
       .set('language', 'en-US')
-      .set('page', '1');
+      .set('page', page.toString());
 
     return this.http.get<MoviesResponse<T>>(this.buildTmdbUrl('search/movie'), {
       headers: this.tmdbHeaders,

@@ -1,37 +1,135 @@
-<mat-progress-bar *ngIf="progressEvent" [color]="color" mode="indeterminate"></mat-progress-bar>
-<div class="searchContianer">
+<ng-container *ngIf="vm$ | async as vm">
+  <mat-progress-bar
+    *ngIf="vm.isLoading"
+    [color]="color"
+    mode="indeterminate"
+  ></mat-progress-bar>
+  <div class="searchContianer">
     <main>
+      <section class="search-hero container px-0">
+        <div class="search-hero__content">
+          <div class="search-hero__text">
+            <p class="eyebrow">Discover movies</p>
+            <h1>Search Movies</h1>
+            <p class="description">
+              Type a movie name and press search to pull results from TMDB. Click any poster to jump into its details instantly.
+            </p>
+          </div>
+          <div class="search-hero__form">
+            <div class="search-input">
+              <i class="fa-solid fa-magnifying-glass search-input__icon"></i>
+              <input
+                class="search-input__field"
+                type="text"
+                placeholder="Type movie name..."
+                aria-label="Movie search"
+                [formControl]="searchControl"
+                (keyup.enter)="submitSearch()"
+              />
+              <button
+                type="button"
+                class="search-input__button"
+                aria-label="Search movies"
+                (click)="submitSearch()"
+              >
+                Search
+              </button>
+            </div>
+            <small class="helper-text">Pro tip: hit Enter to search faster.</small>
+          </div>
+        </div>
+      </section>
 
-        <section class="py-5 text-center container">
-          <div class="row py-lg-5" style="color: white;">
-            <div class="col-lg-6 col-md-8 mx-auto">
-              <h1 class="fw-light">Search Movies</h1>
-              <p>Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don’t simply skip over it entirely.</p>
-              <div class="form-floating mb-3 d-flex">
-                <input class="re-text" [(ngModel)]="searchKey" (keyup)="clickPress($event)" type="text" class="form-control" id="floatingInput" placeholder="Type Movie name...">
-                <label for="floatingInput">Type movie name</label>
-                <div (click)="search()" style="width: 60px; height: 58px; background-color: brown; border-radius: 8px; cursor: pointer;
-                align-self: center; margin-left: 10px;display: flex;align-items: center;justify-content: center;">
-                    <i class="fa-solid fa-magnifying-glass fa-2xl">
-                    </i>
-                </div>
+      <div class="album py-5">
+        <div class="container">
+          <p *ngIf="vm.showInitialHint" class="text-center text-muted py-5">
+            Start by typing a movie name above to see results.
+          </p>
+          <p *ngIf="vm.errorMessage" class="text-center text-danger py-3">
+            {{ vm.errorMessage }}
+          </p>
+          <p *ngIf="vm.showNoResults" class="text-center text-warning py-3">
+            No movies found for "<strong>{{ vm.query }}</strong>".
+          </p>
+
+          <div
+            class="custom-paginator mt-0 mb-4"
+            *ngIf="vm.results.length && vm.totalPages > 1"
+          >
+            <p class="paginator-summary mb-0">
+              Page {{ vm.page }} of {{ vm.totalPages }} &middot; {{ vm.totalResults }}
+              results
+            </p>
+            <div class="paginator-controls">
+              <button
+                type="button"
+                class="paginator-btn"
+                [disabled]="vm.page === 1"
+                (click)="goToPage(1, vm.totalPages)"
+                aria-label="Go to first page"
+              >
+                &laquo;
+              </button>
+              <button
+                type="button"
+                class="paginator-btn"
+                [disabled]="vm.page === 1"
+                (click)="goToPage(vm.page - 1, vm.totalPages)"
+                aria-label="Go to previous page"
+              >
+                &lsaquo;
+              </button>
+              <div class="paginator-pages">
+                <button
+                  type="button"
+                  class="paginator-page"
+                  *ngFor="let page of vm.pages"
+                  [class.active]="page === vm.page"
+                  (click)="goToPage(page, vm.totalPages)"
+                >
+                  {{ page }}
+                </button>
               </div>
+              <button
+                type="button"
+                class="paginator-btn"
+                [disabled]="vm.page === vm.totalPages"
+                (click)="goToPage(vm.page + 1, vm.totalPages)"
+                aria-label="Go to next page"
+              >
+                &rsaquo;
+              </button>
+              <button
+                type="button"
+                class="paginator-btn"
+                [disabled]="vm.page === vm.totalPages"
+                (click)="goToPage(vm.totalPages, vm.totalPages)"
+                aria-label="Go to last page"
+              >
+                &raquo;
+              </button>
             </div>
           </div>
-        </section>
-                
-        <div class="album py-5">
-          <div class="container">
-      
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-3" >
-              <div class="col" *ngFor="let m of collection.results" >
-                <div class="card shadow-sm bg-dark" >
-                  <img class="re-image"  [src]="m.poster_path == null?ErrorImage:imageBASEurl+m.poster_path" (click)="movieDetails(m.id)" alt="">
-                </div>
+          <div
+            class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-3"
+            *ngIf="vm.results.length"
+          >
+            <div
+              class="col"
+              *ngFor="let m of vm.results; trackBy: trackMovieById"
+            >
+              <div class="card shadow-sm bg-dark">
+                <img
+                  class="re-image"
+                  [src]="m.poster_path ? imageBASEurl + m.poster_path : fallbackImage"
+                  [alt]="m.title || 'Movie poster'"
+                  (click)="movieDetails(m.id)"
+                />
               </div>
             </div>
           </div>
         </div>
-      
-      </main>
-</div>
+      </div>
+    </main>
+  </div>
+</ng-container>

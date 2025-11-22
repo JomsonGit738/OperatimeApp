@@ -1,4 +1,8 @@
-<header class="p-2">
+<header
+  class="p-2 app-header"
+  [class.app-header--hidden]="!isHeaderVisible"
+  [class.app-header--scrolled]="!isAtTop"
+>
   <div class="mx-4">
     <div
       class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start"
@@ -45,23 +49,28 @@
       <!-- user status -->
       <div *ngIf="userStatus" class="userDiv">
         <p class="userName">Hai, {{ username ?? "" }}!</p>
-        <div *ngIf="!userImageStatus" class="userIcon">
-          <h5>{{ (username ?? "").substring(0, 1).toUpperCase() }}</h5>
-        </div>
-        <img
-          *ngIf="userImageStatus"
-          class="userImage"
-          [src]="userImage ?? ''"
-          alt="user_Image"
-        />
-        <div class="btn-group">
-          <i
-            class="fa-solid fa-caret-down ms-2"
+        <div class="btn-group user-menu-group">
+          <button
+            type="button"
+            class="user-menu-toggle"
             data-bs-toggle="dropdown"
             data-bs-display="static"
             aria-expanded="false"
-            style="color: #ffffff; cursor: pointer"
-          ></i>
+          >
+            <ng-container *ngIf="userImageStatus; else initialsAvatar">
+              <img
+                class="userImage"
+                [src]="userImage ?? ''"
+                alt="user_Image"
+              />
+            </ng-container>
+            <ng-template #initialsAvatar>
+              <div class="userIcon">
+                <h5>{{ (username ?? "").substring(0, 1).toUpperCase() }}</h5>
+              </div>
+            </ng-template>
+            <i class="fa-solid fa-caret-down ms-2"></i>
+          </button>
           <!-- dropdown hidden items -->
           <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-lg-end">
             <li>
@@ -74,3 +83,4 @@
     </div>
   </div>
 </header>
+<div class="app-header-spacer" aria-hidden="true"></div>

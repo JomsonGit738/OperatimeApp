@@ -12,7 +12,7 @@
             <p class="eyebrow">Discover movies</p>
             <h1>Search Movies</h1>
             <p class="description">
-              Type a movie name and press search to pull results from TMDB. Click any poster to jump into its details instantly.
+              Type a movie name and press search to see what’s playing. Click any poster to jump into its details instantly.
             </p>
           </div>
           <div class="search-hero__form">
@@ -42,7 +42,7 @@
 
       <div class="album py-5">
         <div class="container">
-          <p *ngIf="vm.showInitialHint" class="text-center text-muted py-5">
+          <p *ngIf="vm.showInitialHint" class="text-center py-5 search-hint">
             Start by typing a movie name above to see results.
           </p>
           <p *ngIf="vm.errorMessage" class="text-center text-danger py-3">

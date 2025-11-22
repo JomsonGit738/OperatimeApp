@@ -12,7 +12,7 @@
     font-family: 'Roboto', sans-serif;
 }
 body{
-    background-color: rgba(0, 0, 0, 0.971);
+    background-color: #0b0b10;
 }
 ::-webkit-scrollbar{
     width: 8px;

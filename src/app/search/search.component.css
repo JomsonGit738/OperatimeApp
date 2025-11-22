@@ -5,6 +5,12 @@
 .re-image{
     cursor: pointer;
     border-radius: 8px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.re-image:hover{
+    transform: translateY(-6px) scale(1.05);
+    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.45);
+    outline: 2px solid rgba(218, 28, 28, 0.6);
 }
 
 .search-hero {
@@ -184,6 +190,14 @@
     font-size: 0.9rem;
     color: rgba(255, 255, 255, 0.7);
     white-space: nowrap;
+}
+
+.album .container p {
+    color: rgba(255, 255, 255, 0.9);
+}
+.search-hint {
+    font-size: 1rem;
+    letter-spacing: 0.02em;
 }
 .search-hero .form-floating .form-control {
     background-color: rgba(255, 255, 255, 0.08);

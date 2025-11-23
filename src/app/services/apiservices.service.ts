@@ -10,8 +10,10 @@ import {
 export interface MovieSummary {
   id: number;
   title: string;
+  original_title?: string;
   overview: string;
   vote_average: number;
+  release_date?: string;
   genre_ids: number[];
   backdrop_path: string;
   poster_path: string;

@@ -7,6 +7,7 @@ import {
 import { Router } from '@angular/router';
 import { ThemePalette } from '@angular/material/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
 import {
@@ -27,6 +28,7 @@ import {
   MoviesResponse,
 } from '../services/apiservices.service';
 import { NgToastService } from 'ng-angular-popup';
+import { SearchMovieDialogComponent, SearchMovieDialogData } from './search-movie-dialog/search-movie-dialog.component';
 
 interface SearchViewModel {
   query: string;
@@ -52,7 +54,13 @@ interface SearchParams {
   styleUrls: ['./search.component.css'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, MatProgressBarModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatProgressBarModule,
+    MatDialogModule,
+    SearchMovieDialogComponent,
+  ],
 })
 export class SearchComponent implements OnDestroy {
   readonly color: ThemePalette = 'warn';
@@ -98,7 +106,8 @@ export class SearchComponent implements OnDestroy {
   constructor(
     private readonly api: ApiservicesService,
     private readonly toast: NgToastService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly dialog: MatDialog
   ) {
     this.resetResultsWhenClearing();
   }
@@ -117,8 +126,20 @@ export class SearchComponent implements OnDestroy {
     this.updateSearchParams({ query, page: 1 });
   }
 
-  movieDetails(id: string | number): void {
-    this.router.navigate(['/movie', id]);
+  movieDetails(movie: MovieSummary): void {
+    this.dialog.open<SearchMovieDialogComponent, SearchMovieDialogData>(
+      SearchMovieDialogComponent,
+      {
+        data: {
+          movie,
+          imageBaseUrl: this.imageBASEurl,
+          fallbackImage: this.fallbackImage,
+        },
+        panelClass: 'movie-dialog-panel',
+        maxWidth: '650px',
+        width: '90vw',
+      }
+    );
   }
 
   trackMovieById(_: number, movie: MovieSummary): number {

@@ -9,9 +9,9 @@
       <i class="left-menu-icon fas fa-close fa-xl"></i>
     </button>
     <div class="sidebar">
-      <i routerLink="/search" class="left-menu-icon fas fa-search fa-xl"></i>
-      <i routerLink="/" class="left-menu-icon fas fa-home fa-xl"></i>
-      <i routerLink="/profile" class="left-menu-icon fas fa-user fa-xl"></i>
+      <i routerLink="/search" (click)="closeSidebar()" class="left-menu-icon fas fa-search fa-xl"></i>
+      <i routerLink="/" (click)="closeSidebar()" class="left-menu-icon fas fa-home fa-xl"></i>
+      <i routerLink="/profile" (click)="closeSidebar()" class="left-menu-icon fas fa-user fa-xl"></i>
       <i class="left-menu-icon fas fa-bookmark fa-xl"></i>
       <i class="left-menu-icon fas fa-tv fa-xl"></i>
       <i class="left-menu-icon fas fa-hourglass-start fa-xl"></i>

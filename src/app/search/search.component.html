@@ -12,7 +12,8 @@
             <p class="eyebrow">Discover movies</p>
             <h1>Search Movies</h1>
             <p class="description">
-              Type a movie name and press search to see what’s playing. Click any poster to jump into its details instantly.
+              Type a movie name and press search to see what’s playing. Click
+              any poster to jump into its details instantly.
             </p>
           </div>
           <div class="search-hero__form">
@@ -35,7 +36,9 @@
                 Search
               </button>
             </div>
-            <small class="helper-text">Pro tip: hit Enter to search faster.</small>
+            <small class="helper-text"
+              >Pro tip: hit Enter to search faster.</small
+            >
           </div>
         </div>
       </section>
@@ -49,7 +52,8 @@
             {{ vm.errorMessage }}
           </p>
           <p *ngIf="vm.showNoResults" class="text-center text-warning py-3">
-            No movies found for "<strong>{{ vm.query }}</strong>".
+            No movies found for "<strong>{{ vm.query }}</strong
+            >".
           </p>
 
           <div
@@ -57,7 +61,8 @@
             *ngIf="vm.results.length && vm.totalPages > 1"
           >
             <p class="paginator-summary mb-0">
-              Page {{ vm.page }} of {{ vm.totalPages }} &middot; {{ vm.totalResults }}
+              Page {{ vm.page }} of {{ vm.totalPages }} &middot;
+              {{ vm.totalResults }}
               results
             </p>
             <div class="paginator-controls">
@@ -118,13 +123,26 @@
               class="col"
               *ngFor="let m of vm.results; trackBy: trackMovieById"
             >
-              <div class="card shadow-sm bg-dark">
-                <img
-                  class="re-image"
-                  [src]="m.poster_path ? imageBASEurl + m.poster_path : fallbackImage"
-                  [alt]="m.title || 'Movie poster'"
-                  (click)="movieDetails(m.id)"
-                />
+              <div class="card h-100 shadow-sm bg-dark">
+                <ng-container *ngIf="m.poster_path; else placeholderPoster">
+                  <img
+                    class="re-image"
+                    [src]="imageBASEurl + m.poster_path"
+                    [alt]="m.title || 'Movie poster'"
+                    (click)="movieDetails(m)"
+                  />
+                </ng-container>
+                <ng-template #placeholderPoster>
+                  <div
+                    class="re-image re-image--placeholder h-100"
+                    (click)="movieDetails(m)"
+                  >
+                    <p class="title">
+                      {{ m.title || m.original_title || "Untitled" }}
+                    </p>
+                    <p class="subtitle">Poster unavailable</p>
+                  </div>
+                </ng-template>
               </div>
             </div>
           </div>

@@ -1,0 +1,22 @@
+<div class="movie-dialog" [ngStyle]="backdropStyle">
+  <div class="movie-dialog__card">
+    <div class="movie-dialog__poster">
+      <img [src]="posterUrl" [alt]="data.movie.title || data.movie.original_title" />
+    </div>
+    <div class="movie-dialog__details">
+      <p class="movie-dialog__eyebrow">Now Showing</p>
+      <h2>{{ data.movie.title || data.movie.original_title }}</h2>
+      <p class="movie-dialog__meta">
+        <span>{{ data.movie.release_date || 'Unknown date' }}</span>
+        <span class="divider"></span>
+        <span>
+          <i class="fa-solid fa-star"></i>
+          {{ data.movie.vote_average | number : '1.1-1' }} / 10
+        </span>
+      </p>
+      <p class="movie-dialog__overview">
+        {{ data.movie.overview || 'Description unavailable.' }}
+      </p>
+    </div>
+  </div>
+</div>

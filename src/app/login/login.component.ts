@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ApiservicesService } from '../services/apiservices.service';
-import { NgToastService } from 'ng-angular-popup';
-import { SocialAuthService } from '@abacritt/angularx-social-login';
-import { GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
+import { SocialAuthService, SocialUser, GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
+import { ToastService } from '../services/toast.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -16,86 +16,90 @@ import { GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, ReactiveFormsModule, RouterModule, GoogleSigninButtonModule],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
 
-  user:any =''
+  private readonly destroy$ = new Subject<void>();
+  private user: SocialUser | null = null;
 
-  constructor(private fb:FormBuilder,
-    private router:Router,
-    private api:ApiservicesService,
-    private toast:NgToastService,
-    private GoogleAuthService: SocialAuthService){}
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private api: ApiservicesService,
+    private toast: ToastService,
+    private googleAuthService: SocialAuthService
+  ) {}
 
 
- ngOnInit(): void {    
-    //handling Google Sing In
-    this.GoogleAuthService.authState.subscribe((user) => {
-      this.user = user; 
-      this.GoogleSignIn()
+  ngOnInit(): void {
+    this.googleAuthService.authState
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((user) => {
+        this.user = user;
+        if (user) {
+          this.handleGoogleSignIn(user);
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  readonly loginForm = this.fb.nonNullable.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]*$/)]],
+  });
+
+  logIn(): void {
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+
+    const { email, password } = this.loginForm.getRawValue();
+
+    this.api.logIn(email, password).subscribe({
+      next: (res: any) => {
+        sessionStorage.setItem('username', res.existingUser.username);
+        sessionStorage.setItem('email', res.existingUser.email);
+        sessionStorage.setItem('token', res.token);
+
+        this.api.sessionUser.next(res.existingUser.username);
+
+        this.loginForm.reset();
+        this.toast.success('Login successful!', 'No more waiting, book now!', {
+          duration: 10000,
+        });
+        this.router.navigateByUrl('');
+      },
+      error: (err: any) => {
+        this.toast.error('Error!', err.error, { duration: 10000 });
+        console.log(err);
+      },
     });
   }
 
-  GoogleSignIn(){
-    let username = this.user.name
-    let email = this.user.email
-    let user_Photo = this.user.photoUrl
+  private handleGoogleSignIn(user: SocialUser): void {
+    this.api.GoogleSignIn(user.email, user.name).subscribe({
+      next: (res: any) => {
+        sessionStorage.setItem('username', res.existingUser.username);
+        sessionStorage.setItem('email', res.existingUser.email);
+        sessionStorage.setItem('photo', user.photoUrl);
+        sessionStorage.setItem('token', res.token);
 
-    this.api.GoogleSignIn(email,username).subscribe({
-      next:(res:any)=>{
-        console.log(res);
-        sessionStorage.setItem('username',res.existingUser.username)
-          sessionStorage.setItem('email',res.existingUser.email)
-          sessionStorage.setItem('photo',user_Photo)
-          sessionStorage.setItem('token',res.token)
-          //behaviorSubject
-          this.api.sessionUser.next(res.existingUser.username)
-          this.toast.success({detail:"Sign In successful",summary:'No more waiting, Book Now!',duration:5000});
-        setTimeout(()=>{
-          this.router.navigateByUrl('/')
-        },2000)
-      },error:(err:any)=>{
-        this.toast.error({detail:"Error!",summary:err.error,duration:10000});
+        this.api.sessionUser.next(res.existingUser.username);
+
+        this.toast.success('Sign in successful', 'No more waiting, book now!');
+        setTimeout(() => {
+          this.router.navigateByUrl('/');
+        }, 2000);
+      },
+      error: (err: any) => {
+        this.toast.error('Error!', err.error, { duration: 10000 });
         console.log(err);
-        
-      }
-    })
-    
-  }
-
-
-  loginForm = this.fb.group({
-    email:['',[Validators.required,Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
-    password:['',[Validators.required,Validators.pattern('[a-zA-Z0-9]*')]]
-  })
-
-  logIn(){
-    if(!this.loginForm.valid){
-      this.toast.error({detail:"Error!",summary:"Recheck the inputs as required!",duration:5000});
-
-    } else {
-      let email = this.loginForm.value.email
-      let password = this.loginForm.value.password
-      // alert(email+" "+password)
-      this.api.logIn(email,password).subscribe({
-        next:(res:any)=>{
-          //console.log(res);
-          sessionStorage.setItem('username',res.existingUser.username)
-          sessionStorage.setItem('email',res.existingUser.email)
-          sessionStorage.setItem('token',res.token)
-
-          //behaviorSubject
-          this.api.sessionUser.next(res.existingUser.username)
-          
-
-          this.loginForm.reset()
-          this.toast.success({detail:"Login Successful!",summary:'No more waiting, Book Now!',duration:10000});
-          this.router.navigateByUrl('')
-        },error:(err:any)=>{
-          this.toast.error({detail:"Error!",summary:err.error,duration:10000});
-          console.log(err);
-        }
-      })
-    }
+      },
+    });
   }
 
 }

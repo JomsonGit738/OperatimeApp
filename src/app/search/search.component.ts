@@ -27,8 +27,8 @@ import {
   MovieSummary,
   MoviesResponse,
 } from '../services/apiservices.service';
-import { NgToastService } from 'ng-angular-popup';
 import { SearchMovieDialogComponent, SearchMovieDialogData } from './search-movie-dialog/search-movie-dialog.component';
+import { ToastService } from '../services/toast.service';
 
 interface SearchViewModel {
   query: string;
@@ -105,7 +105,7 @@ export class SearchComponent implements OnDestroy {
 
   constructor(
     private readonly api: ApiservicesService,
-    private readonly toast: NgToastService,
+    private readonly toast: ToastService,
     private readonly router: Router,
     private readonly dialog: MatDialog
   ) {
@@ -115,9 +115,7 @@ export class SearchComponent implements OnDestroy {
   submitSearch(): void {
     const query = this.searchControl.value.trim();
     if (!query) {
-      this.toast.error({
-        detail: 'Empty search',
-        summary: 'Type a movie name to search.',
+      this.toast.error('Empty search', 'Type a movie name to search.', {
         duration: 2500,
       });
       this.updateSearchParams({ query: '', page: 1 });
@@ -193,9 +191,7 @@ export class SearchComponent implements OnDestroy {
       })),
       tap(({ results }) => {
         if (!results.length) {
-          this.toast.warning({
-            detail: 'No matches',
-            summary: 'Try another movie name.',
+          this.toast.warning('No matches', 'Try another movie name.', {
             duration: 2000,
           });
         }
@@ -216,11 +212,11 @@ export class SearchComponent implements OnDestroy {
       }),
       catchError((error) => {
         console.error(error);
-        this.toast.error({
-          detail: 'Search failed',
-          summary: 'Unable to fetch movies right now.',
-          duration: 2500,
-        });
+        this.toast.error(
+          'Search failed',
+          'Unable to fetch movies right now.',
+          { duration: 2500 }
+        );
         return of(
           {
             query,

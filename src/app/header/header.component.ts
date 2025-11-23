@@ -10,9 +10,9 @@ import {
 import { RouterModule } from '@angular/router';
 import { ApiservicesService } from '../services/apiservices.service';
 import { Router } from '@angular/router';
-import { NgToastService } from 'ng-angular-popup';
 import { Subscription } from 'rxjs';
 import { SidebarService } from '../services/sidebar.service';
+import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-header',
@@ -39,7 +39,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   constructor(
     private readonly api: ApiservicesService,
     private readonly router: Router,
-    private readonly toast: NgToastService,
+    private readonly toast: ToastService,
     private readonly cdr: ChangeDetectorRef,
     private readonly sidebarService: SidebarService
   ) {}
@@ -127,7 +127,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.userImage = null;
     this.api.sessionUser.next('');
     setTimeout(() => {
-      this.toast.success({ detail: 'Logged Out', summary: 'Have a nice day!', duration: 3000 });
+      this.toast.success('Logged Out', 'Have a nice day!', { duration: 3000 });
       this.router.navigateByUrl('');
     }, 1000);
   }

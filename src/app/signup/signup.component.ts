@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import { ApiservicesService } from '../services/apiservices.service';
-import { NgToastService } from 'ng-angular-popup';
 import { Router } from '@angular/router';
+import { ToastService } from '../services/toast.service';
 
 
 @Component({
@@ -21,7 +21,7 @@ export class SignupComponent {
   constructor(private fb:FormBuilder,
     private router:Router,
     private api:ApiservicesService,
-    private toast:NgToastService){
+    private toast:ToastService){
   }
 
   signUpForm = this.fb.group({
@@ -32,7 +32,7 @@ export class SignupComponent {
 
   signUp(){
     if(!this.signUpForm.valid){
-      this.toast.error({detail:"Error!",summary:"Fill all the inputs as required!",duration:5000});
+      this.toast.error('Error!', 'Fill all the inputs as required!');
     } else {
       let username = this.signUpForm.value.username
       let email = this.signUpForm.value.email
@@ -42,12 +42,15 @@ export class SignupComponent {
         next:(res:any)=>{
           //console.log(res)
           this.signUpForm.reset()
-          this.toast.success({detail:"Signed Up",summary:'sign up successful, please login with email & password',duration:5000});
+          this.toast.success(
+            'Signed up',
+            'Sign up successful, please login with email & password'
+          );
           setTimeout(()=>{
             this.router.navigateByUrl('/login')
           },2000)
         },error:(err:any)=>{
-          this.toast.error({detail:"Error!",summary:err.error,duration:10000});
+          this.toast.error('Error!', err.error, { duration: 10000 });
           console.log(err);
           
         }

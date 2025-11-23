@@ -7,7 +7,6 @@ import {
 } from '@angular/core';
 import { ApiservicesService } from '../services/apiservices.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { NgToastService } from 'ng-angular-popup';
 import {
   IPayPalConfig,
   ICreateOrderRequest,
@@ -26,6 +25,7 @@ import {
   tap,
 } from 'rxjs';
 import { ServerResponse } from 'src/shared/models/common.interface';
+import { ToastService } from '../services/toast.service';
 
 interface Seat {
   id: number;
@@ -96,7 +96,7 @@ export class BookingComponent implements OnInit {
   constructor(
     private api: ApiservicesService,
     private router: Router,
-    private myToast: NgToastService,
+    private toast: ToastService,
     private route: ActivatedRoute,
     private readonly cdr: ChangeDetectorRef
   ) {}
@@ -199,37 +199,30 @@ export class BookingComponent implements OnInit {
     var openingHour = new Date();
     openingHour.setHours(24, 0, 0); // 12.00:00 pm (24:00:00 pm)
     if (this.newDate >= closingHour && this.newDate < openingHour) {
-      this.myToast.error({
-        detail: 'Sorry! Counter closed',
-        summary: 'please read our terms and conditions',
-        duration: 5000,
-      });
+      this.toast.error(
+        'Sorry! Counter closed',
+        'Please read our terms and conditions'
+      );
     }
     //if user could not signed in
     else if (!sessionStorage.getItem('email')) {
-      this.myToast.error({
-        detail: 'Log in!',
-        summary: 'Please login to continue booking',
-        duration: 5000,
-      });
+      this.toast.error(
+        'Log in!',
+        'Please login to continue booking'
+      );
     }
     //if seat array is undefined or no seats are selected
     else if (this.seletedSeats == undefined || this.seletedSeats.length == 0) {
       this.seletedSeats = [];
-      this.myToast.error({
-        detail: 'No Seats selected!',
-        summary: 'Please select your seats',
-        duration: 5000,
-      });
+      this.toast.error('No seats selected!', 'Please select your seats');
     }
     //if seats are selected more than 4
     else if (this.seletedSeats.length >= 5) {
       this.seletedSeats = [];
-      this.myToast.error({
-        detail: 'Only 4 seats!',
-        summary: 'Online booking limited to 4 seats, read terms and conditions',
-        duration: 5000,
-      });
+      this.toast.error(
+        'Only 4 seats!',
+        'Online booking limited to 4 seats, read terms and conditions'
+      );
     }
     //saving seats to Database
     else {
@@ -330,9 +323,7 @@ export class BookingComponent implements OnInit {
         this.progressEvent = true;
         this.payBoolean = false;
         this.seatContainer = false;
-        this.myToast.success({
-          detail: 'Please wait!',
-          summary: 'Do not refresh or close, we are processing...',
+        this.toast.success('Please wait!', 'Processing your booking...', {
           duration: 10000,
         });
         //resetting bill details
@@ -347,11 +338,7 @@ export class BookingComponent implements OnInit {
         this.seletedSeats = [];
         this.payBoolean = false;
         this.seatContainer = false;
-        this.myToast.warning({
-          detail: 'Canceled!',
-          summary: 'Take time! we have seats for you.',
-          duration: 5000,
-        });
+        this.toast.warning('Canceled!', 'Take time! We have seats for you.');
         this.cdr.markForCheck();
       },
       onError: (err) => {
@@ -359,12 +346,10 @@ export class BookingComponent implements OnInit {
         this.seletedSeats = [];
         this.payBoolean = false;
         this.seatContainer = false;
-        this.myToast.warning({
-          detail: 'Error!',
-          summary:
-            'Recheck selected seats and Ineternet connection! try again!',
-          duration: 5000,
-        });
+        this.toast.warning(
+          'Error!',
+          'Recheck selected seats and internet connection, then try again.'
+        );
         this.cdr.markForCheck();
       },
       onClick: (data, actions) => {

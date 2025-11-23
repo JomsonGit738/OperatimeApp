@@ -31,3 +31,168 @@ body{
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+:root {
+    --toast-width: min(420px, calc(100vw - 32px));
+    --toast-radius: 14px;
+    --toast-shadow: 0 18px 55px rgba(0, 0, 0, 0.45);
+    --toast-border: rgba(255, 255, 255, 0.08);
+    --toast-blur: 10px;
+    --toast-bg: linear-gradient(135deg, #0f172a 0%, #0b1221 100%);
+    --toast-text: #e5e7eb;
+    --toast-subtext: #9ca3af;
+    --toast-success: #22c55e;
+    --toast-error: #f87171;
+    --toast-warning: #fbbf24;
+    --toast-info: #38bdf8;
+}
+
+ng-toast .toast-container {
+    pointer-events: none;
+    opacity: 0;
+    transform: translate3d(0, -12px, 0);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    z-index: 1100;
+    padding: 6px;
+}
+
+ng-toast .toast-container.active {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+ng-toast .toast-container.toast-top-right,
+ng-toast .toast-container.toast-top-center,
+ng-toast .toast-container.toast-top-left {
+    top: 18px;
+    bottom: auto;
+}
+
+ng-toast .toast-container.toast-bottom-right,
+ng-toast .toast-container.toast-bottom-center,
+ng-toast .toast-container.toast-bottom-left {
+    bottom: 18px;
+    top: auto;
+    transform: translate3d(0, 12px, 0);
+}
+
+ng-toast .toast-container.toast-bottom-right.active,
+ng-toast .toast-container.toast-bottom-center.active,
+ng-toast .toast-container.toast-bottom-left.active {
+    transform: translate3d(0, 0, 0);
+}
+
+ng-toast .toast-container.toast-top-right { right: 18px; left: auto; }
+ng-toast .toast-container.toast-top-left { left: 18px; right: auto; }
+ng-toast .toast-container.toast-bottom-right { right: 18px; left: auto; }
+ng-toast .toast-container.toast-bottom-left { left: 18px; right: auto; }
+
+ng-toast .toast-container.toast-top-center,
+ng-toast .toast-container.toast-bottom-center {
+    right: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+}
+
+ng-toast .ng-toast {
+    width: var(--toast-width);
+    background: var(--toast-bg);
+    border-radius: var(--toast-radius);
+    border: 1px solid var(--toast-border);
+    box-shadow: var(--toast-shadow);
+    backdrop-filter: blur(var(--toast-blur));
+    color: var(--toast-text);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 14px 16px;
+    pointer-events: auto;
+    transform: translateY(-6px) scale(0.98);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+}
+
+ng-toast .toast-container.active .ng-toast {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.5);
+}
+
+ng-toast .container-1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+ng-toast .container-1 i {
+    font-size: 24px;
+}
+
+ng-toast .container-2 {
+    display: grid;
+    gap: 4px;
+}
+
+ng-toast .container-2 p:first-child {
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+ng-toast .container-2 p:last-child {
+    margin: 0;
+    color: var(--toast-subtext);
+    font-size: 0.92rem;
+}
+
+ng-toast #close {
+    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    color: var(--toast-text);
+    font-size: 18px;
+    line-height: 1;
+    padding: 6px 10px;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+ng-toast #close:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+}
+
+ng-toast .ng-toast.success {
+    border-left: 4px solid var(--toast-success);
+}
+
+ng-toast .ng-toast.success .container-1 i {
+    color: var(--toast-success);
+}
+
+ng-toast .ng-toast.error {
+    border-left: 4px solid var(--toast-error);
+}
+
+ng-toast .ng-toast.error .container-1 i {
+    color: var(--toast-error);
+}
+
+ng-toast .ng-toast.warning {
+    border-left: 4px solid var(--toast-warning);
+}
+
+ng-toast .ng-toast.warning .container-1 i {
+    color: var(--toast-warning);
+}
+
+ng-toast .ng-toast.info {
+    border-left: 4px solid var(--toast-info);
+}
+
+ng-toast .ng-toast.info .container-1 i {
+    color: var(--toast-info);
+}

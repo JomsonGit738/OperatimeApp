@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { ApiservicesService } from '../services/apiservices.service';
+import { ApiservicesService } from '../../core/services/apiservices.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { catchError, filter, map, Observable, of, switchMap } from 'rxjs';

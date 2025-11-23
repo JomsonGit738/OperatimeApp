@@ -6,7 +6,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ApiservicesService } from '../services/apiservices.service';
+import { ApiservicesService } from '../../core/services/apiservices.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
   IPayPalConfig,
@@ -26,7 +26,7 @@ import {
   tap,
 } from 'rxjs';
 import { ServerResponse } from 'src/shared/models/common.interface';
-import { ToastService } from '../services/toast.service';
+import { ToastService } from '../../core/services/toast.service';
 
 interface Seat {
   id: number;

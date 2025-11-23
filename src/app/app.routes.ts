@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
 
-import { BookingComponent } from './booking/booking.component';
-import { DetailsComponent } from './details/details.component';
-import { HomeComponent } from './home/home.component';
-import { LoginComponent } from './login/login.component';
-import { MyprofileComponent } from './myprofile/myprofile.component';
-import { SearchComponent } from './search/search.component';
-import { authGuard } from './guards/auth.guard';
+import { BookingComponent } from './features/booking/booking.component';
+import { DetailsComponent } from './features/details/details.component';
+import { HomeComponent } from './features/home/home.component';
+import { LoginComponent } from './features/login/login.component';
+import { MyprofileComponent } from './features/myprofile/myprofile.component';
+import { SearchComponent } from './features/search/search.component';
+import { authGuard } from './core/guards/auth.guard';
 
 export const appRoutes: Routes = [
   { path: '', component: HomeComponent },

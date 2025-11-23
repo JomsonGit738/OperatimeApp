@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { SidebarService } from '../services/sidebar.service';
+import { SidebarService } from '../../core/services/sidebar.service';
 
 @Component({
   selector: 'app-sidebar',

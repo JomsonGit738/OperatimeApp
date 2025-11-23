@@ -1,7 +1,7 @@
 import { importProvidersFrom } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import {
   GoogleLoginProvider,
@@ -13,11 +13,12 @@ import { NgToastModule } from 'ng-angular-popup';
 
 import { AppComponent } from './app/app.component';
 import { appRoutes } from './app/app.routes';
+import { authInterceptor } from './app/core/http/auth.interceptor';
 
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(appRoutes),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withInterceptors([authInterceptor])),
     provideAnimations(),
     importProvidersFrom(NgToastModule, SocialLoginModule, GoogleSigninButtonModule),
     {

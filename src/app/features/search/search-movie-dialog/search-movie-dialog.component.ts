@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MovieSummary } from '../../services/apiservices.service';
+import { MovieSummary } from '../../../models/api.models';
 
 export interface SearchMovieDialogData {
   movie: MovieSummary;

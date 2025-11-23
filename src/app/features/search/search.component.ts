@@ -23,12 +23,11 @@ import {
   tap,
 } from 'rxjs/operators';
 import {
-  ApiservicesService,
-  MovieSummary,
-  MoviesResponse,
-} from '../services/apiservices.service';
+  ApiservicesService
+} from '../../core/services/apiservices.service';
+import { MovieSummary, MoviesResponse } from '../../models/api.models';
 import { SearchMovieDialogComponent, SearchMovieDialogData } from './search-movie-dialog/search-movie-dialog.component';
-import { ToastService } from '../services/toast.service';
+import { ToastService } from '../../core/services/toast.service';
 
 interface SearchViewModel {
   query: string;

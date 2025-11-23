@@ -8,11 +8,11 @@ import {
   OnInit,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { ApiservicesService } from '../services/apiservices.service';
+import { ApiservicesService } from '../../core/services/apiservices.service';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { SidebarService } from '../services/sidebar.service';
-import { ToastService } from '../services/toast.service';
+import { SidebarService } from '../../core/services/sidebar.service';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-header',

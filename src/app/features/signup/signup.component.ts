@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
-import { ApiservicesService } from '../services/apiservices.service';
+import { ApiservicesService } from '../../core/services/apiservices.service';
 import { Router } from '@angular/router';
-import { ToastService } from '../services/toast.service';
+import { ToastService } from '../../core/services/toast.service';
 
 
 @Component({

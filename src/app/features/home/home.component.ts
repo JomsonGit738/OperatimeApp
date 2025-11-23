@@ -10,8 +10,8 @@ import { Router, RouterModule } from '@angular/router';
 
 import {
   ApiservicesService,
-  MovieSummary,
-} from '../services/apiservices.service';
+} from '../../core/services/apiservices.service';
+import { MovieSummary } from '../../models/api.models';
 import {
   GenresItem,
   GenresList,

@@ -8,13 +8,14 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { ApiservicesService, AuthResponse } from '../services/apiservices.service';
+import { ApiservicesService } from '../../core/services/apiservices.service';
 import {
   SocialAuthService,
   SocialUser,
   GoogleSigninButtonModule,
 } from '@abacritt/angularx-social-login';
-import { ToastService } from '../services/toast.service';
+import { ToastService } from '../../core/services/toast.service';
+import { AuthResponse } from '../../models/api.models';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -145,7 +146,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.loginForm.patchValue({ email });
       },
       error: (err: any) => {
-        this.toast.error('Error!', err.error ?? 'Sign up failed', { duration: 10000 });
+        this.toast.error('Error!', err.error ?? 'Sign up failed');
         console.log(err);
       },
     });
@@ -191,5 +192,3 @@ export class LoginComponent implements OnInit, OnDestroy {
     }, 20);
   }
 }
-
-// do it with your idea. but remember this is not just showcasing project i want to include in my cv. so, do everything as you said but it should be minimal and safe with best practises in MEAN stack. currenlty only focus on login.

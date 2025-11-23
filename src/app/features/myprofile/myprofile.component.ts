@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Observable, map, shareReplay, throwError } from 'rxjs';
-import { ApiservicesService } from '../services/apiservices.service';
+import { ApiservicesService } from '../../core/services/apiservices.service';
 import { LoaderComponent } from 'src/shared/components/loader/loader.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { TicketQrDialogComponent, TicketQrDialogData } from './ticket-qr-dialog/ticket-qr-dialog.component';

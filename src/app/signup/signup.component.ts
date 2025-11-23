@@ -50,7 +50,7 @@ export class SignupComponent {
             this.router.navigateByUrl('/login')
           },2000)
         },error:(err:any)=>{
-          this.toast.error('Error!', err.error, { duration: 10000 });
+          this.toast.error('Error!', err.error);
           console.log(err);
           
         }

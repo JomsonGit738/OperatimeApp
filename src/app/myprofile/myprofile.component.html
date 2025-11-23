@@ -1,80 +1,110 @@
 <ng-container *ngIf="vm$ | async as vm; else loadingState">
-  <div class="profileContainer">
-    <div class="container p-3 rounded cart">
-      <div class="row no-gutters">
-        <div class="col-md-4">
-          <div class="userProfile text-center">
-            <ng-container *ngIf="vm.userImage; else userInitial">
-              <img [src]="vm.userImage" alt="User profile image" class="img-fluid rounded-circle mb-3" />
-            </ng-container>
-            <ng-template #userInitial>
-              <div class="userIcon">
-                <p>{{ vm.userInitial }}</p>
-              </div>
-            </ng-template>
-            <h4>{{ vm.user.username }}</h4>
-            <h6>{{ vm.user.email }}</h6>
-            <hr />
-            <p class="mb-0 text-center">
-              <i class="fa-solid fa-circle-info fa-beat-fade me-1"></i>
-              Show your QR code when entering the theatre. Ask the staff for a printed bill if you need one.
-            </p>
-          </div>
+  <section class="profile-shell">
+    <div class="texture"></div>
+
+    <header class="page-head">
+      <div>
+        <p class="eyebrow">Operatime</p>
+        <h1>Your profile & tickets</h1>
+        <p class="subtext">
+          Keep your bookings, QR codes, and showtimes in one place.
+        </p>
+      </div>
+      <div class="mini-stats">
+        <div class="stat-card">
+          <p class="stat-label">Tickets</p>
+          <p class="stat-value">{{ vm.ticketCount }}</p>
         </div>
-        <div class="col-md-8">
-          <div class="product-details mr-2">
-            <div class="d-flex flex-row align-items-center">
-              <h5 class="mb-0">My tickets</h5>
-            </div>
-            <hr />
-            <h4 *ngIf="!vm.hasTickets">
-              <i class="fa-solid fa-circle-info fa-shake me-2"></i>
-              You have not purchased any tickets yet.
-            </h4>
-            <div *ngIf="vm.hasTickets" class="d-flex justify-content-between align-items-center">
-              You have {{ vm.ticketCount }} ticket{{ vm.ticketCount === 1 ? '' : 's' }}
-            </div>
-            <div *ngIf="vm.hasTickets" class="ticketsContainer mt-3">
-              <div
-                *ngFor="let ticket of vm.tickets; trackBy: trackTicketByOperaId"
-                class="d-flex justify-content-between align-items-center mt-3 p-2 items rounded ticket-row"
-              >
-                <div class="d-flex flex-row">
-                  <img class="rounded itemImage" [src]="imageBASEurl + ticket.mimage" alt="{{ ticket.movietitle }}" width="100" />
-                  <div class="ms-2 mContent">
-                    <h4 class="mt-3 mb-1">{{ ticket.movietitle }}</h4>
-                    <p class="mb-1">Date: {{ ticket.date }}</p>
-                    <p class="mb-1">Time: {{ ticket.time || defaultShowTime }}</p>
-                    <p class="mb-1">
-                      Seats:
-                      <ng-container *ngFor="let seat of ticket.seats; let last = last">
-                        <span>{{ seat }}<span *ngIf="!last">, </span></span>
-                      </ng-container>
-                    </p>
+        <div class="stat-card">
+          <p class="stat-label">Status</p>
+          <p class="stat-value" [class.active]="vm.hasTickets">{{ vm.hasTickets ? 'Active' : 'Empty' }}</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="profile-grid">
+      <div class="profile-card glass">
+        <div class="avatar-wrap">
+          <ng-container *ngIf="vm.userImage; else initialAvatar">
+            <img [src]="vm.userImage" alt="User profile image" />
+          </ng-container>
+          <ng-template #initialAvatar>
+            <div class="avatar-initial">{{ vm.userInitial }}</div>
+          </ng-template>
+        </div>
+        <div class="profile-meta">
+          <h3>{{ vm.user.username }}</h3>
+          <p class="email">{{ vm.user.email }}</p>
+        </div>
+        <div class="hint">
+          <i class="fa-solid fa-circle-info me-1"></i>
+          Show your QR at entry. Ask staff if you need a printed bill.
+        </div>
+      </div>
+
+      <div class="tickets-card glass">
+        <div class="card-head">
+          <div>
+            <p class="eyebrow subtle">Tickets</p>
+            <h2>My bookings</h2>
+          </div>
+          <span class="badge" [class.badge-active]="vm.hasTickets">{{ vm.ticketCount }} total</span>
+        </div>
+
+        <div *ngIf="!vm.hasTickets" class="empty-state">
+          <i class="fa-solid fa-ticket-simple fa-fade"></i>
+          <p>You have not purchased any tickets yet.</p>
+        </div>
+
+        <div *ngIf="vm.hasTickets" class="tickets-scroll">
+          <article
+            *ngFor="let ticket of vm.tickets; trackBy: trackTicketByOperaId"
+            class="ticket-row"
+          >
+            <div class="ticket-main">
+              <img class="poster" [src]="imageBASEurl + ticket.mimage" alt="{{ ticket.movietitle }}" />
+              <div class="ticket-copy">
+                <h3>{{ ticket.movietitle }}</h3>
+                <p class="time-line">
+                  <span class="label">Show time</span>
+                  <span class="time-chip">{{ defaultShowTime }}</span>
+                </p>
+                <p>
+                  <span class="label">Booked at</span>
+                  {{ ticket.time || defaultShowTime }}
+                </p>
+                <div class="seat-line">
+                  <span class="label">Seats</span>
+                  <div class="seat-chips">
+                    <span class="seat-chip" *ngFor="let seat of ticket.seats">
+                      {{ seat }}
+                    </span>
                   </div>
                 </div>
-                <div class="d-flex flex-row align-items-center">
-                  <ng-container *ngIf="isTicketForToday(ticket); else expiredTicket">
-                    <button type="button" class="view-button" (click)="downloadTicket(ticket)">Show QR</button>
-                  </ng-container>
-                  <ng-template #expiredTicket>
-                    <span class="text-danger fw-bold">Expired</span>
-                  </ng-template>
-                </div>
               </div>
             </div>
-          </div>
+            <div class="ticket-actions">
+              <ng-container *ngIf="isTicketForToday(ticket); else expired">
+                <button type="button" class="ghost-btn" (click)="downloadTicket(ticket)">
+                  <i class="fa-solid fa-qrcode me-2"></i> Show QR
+                </button>
+              </ng-container>
+              <ng-template #expired>
+                <span class="expired">Expired</span>
+              </ng-template>
+            </div>
+          </article>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </ng-container>
 
 <ng-template #loadingState>
-  <div class="profileContainer">
-    <div class="container p-4 rounded cart text-center d-flex flex-column align-items-center justify-content-center">
+  <section class="profile-shell">
+    <div class="loader-card glass">
       <app-loader></app-loader>
       <p class="mt-3 mb-0 text-uppercase fw-semibold">Loading your profile...</p>
     </div>
-  </div>
+  </section>
 </ng-template>

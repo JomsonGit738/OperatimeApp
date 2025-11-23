@@ -32,6 +32,11 @@ body{
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+.qr-dialog-panel .mat-mdc-dialog-container {
+    background: transparent;
+    box-shadow: none;
+}
+
 :root {
     --toast-width: min(420px, calc(100vw - 32px));
     --toast-radius: 14px;

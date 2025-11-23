@@ -3,6 +3,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Observable, map, shareReplay, throwError } from 'rxjs';
 import { ApiservicesService } from '../services/apiservices.service';
 import { LoaderComponent } from 'src/shared/components/loader/loader.component';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { TicketQrDialogComponent, TicketQrDialogData } from './ticket-qr-dialog/ticket-qr-dialog.component';
 
 @Component({
   selector: 'app-myprofile',
@@ -10,7 +12,7 @@ import { LoaderComponent } from 'src/shared/components/loader/loader.component';
   styleUrls: ['./myprofile.component.css'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, LoaderComponent],
+  imports: [CommonModule, LoaderComponent, MatDialogModule],
 })
 export class MyprofileComponent {
   private readonly storedEmail = sessionStorage.getItem('email');
@@ -32,7 +34,10 @@ export class MyprofileComponent {
     shareReplay({ bufferSize: 1, refCount: true })
   );
 
-  constructor(private readonly api: ApiservicesService) {}
+  constructor(
+    private readonly api: ApiservicesService,
+    private readonly dialog: MatDialog
+  ) {}
 
   trackTicketByOperaId(_: number, ticket: Ticket): string {
     return ticket.operaId;
@@ -47,8 +52,15 @@ export class MyprofileComponent {
     if (!ticket.operaId) {
       return;
     }
-    const url = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${ticket.operaId}`;
-    window.open(url);
+    const qrUrl = this.buildQrUrl(ticket.operaId);
+    const dialogData: TicketQrDialogData = {
+      title: `QR for ${ticket.movietitle}`,
+      qrUrl,
+    };
+    this.dialog.open(TicketQrDialogComponent, {
+      data: dialogData,
+      panelClass: 'qr-dialog-panel',
+    });
   }
 
   private loadUserProfile(): Observable<UserProfile> {
@@ -90,6 +102,11 @@ export class MyprofileComponent {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return today.toISOString().slice(0, 10);
+  }
+
+  private buildQrUrl(payload: string): string {
+    const encoded = encodeURIComponent(payload);
+    return `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encoded}`;
   }
 }
 

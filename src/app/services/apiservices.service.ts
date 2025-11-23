@@ -35,6 +35,17 @@ export interface GenresResponse {
   genres: Genre[];
 }
 
+export interface AuthUser {
+  username: string;
+  email: string;
+  tickets: unknown[];
+}
+
+export interface AuthResponse {
+  user: AuthUser;
+  token: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -58,11 +69,20 @@ export class ApiservicesService {
     return `${this.tmdbApiBase}/${path}`;
   }
 
+  clearSession(): void {
+    sessionStorage.removeItem('username');
+    sessionStorage.removeItem('email');
+    sessionStorage.removeItem('photo');
+    sessionStorage.removeItem('token');
+    this.sessionUser.next('');
+  }
+
   private createAuthOptions(): { headers: HttpHeaders } {
     const token = sessionStorage.getItem('token');
-    const headers = token
-      ? new HttpHeaders({ 'access-token': token })
-      : new HttpHeaders();
+    let headers = new HttpHeaders();
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
     return { headers };
   }
 
@@ -127,17 +147,17 @@ export class ApiservicesService {
   logIn(
     email: string | null | undefined,
     password: string | null | undefined
-  ): Observable<unknown> {
+  ): Observable<AuthResponse> {
     const body = { email, password };
-    return this.http.post(`${this.baseUrl}/user/login`, body);
+    return this.http.post<AuthResponse>(`${this.baseUrl}/user/login`, body);
   }
 
   GoogleSignIn(
     email: string | null | undefined,
     username: string | null | undefined
-  ): Observable<unknown> {
+  ): Observable<AuthResponse> {
     const body = { email, username };
-    return this.http.post(`${this.baseUrl}/user/gosin`, body);
+    return this.http.post<AuthResponse>(`${this.baseUrl}/user/gosin`, body);
   }
 
   getUserDetails(email: string | null): Observable<unknown> {

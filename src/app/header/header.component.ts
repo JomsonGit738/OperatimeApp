@@ -118,18 +118,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   SignOut(): void {
-    sessionStorage.removeItem('username');
-    sessionStorage.removeItem('email');
-    sessionStorage.removeItem('photo');
+    this.api.clearSession();
     this.userStatus = false;
     this.userImageStatus = false;
     this.username = null;
     this.userImage = null;
-    this.api.sessionUser.next('');
-    setTimeout(() => {
-      this.toast.success('Logged Out', 'Have a nice day!', { duration: 3000 });
-      this.router.navigateByUrl('');
-    }, 1000);
+    this.toast.success('Logged Out', 'Have a nice day!');
+    this.router.navigateByUrl('');
   }
 
 

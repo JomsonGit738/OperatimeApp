@@ -15,7 +15,6 @@ export interface ToastOptions {
   summary?: string;
   duration?: number;
   position?: ToastPosition;
-  sticky?: boolean;
 }
 
 @Injectable({
@@ -26,16 +25,15 @@ export class ToastService {
     Usage cheatsheet:
     - Quick default (auto closes): this.toast.success('Saved', 'Movie updated');
     - Custom duration (ms): this.toast.error('Failed', 'Network error', { duration: 8000 });
-    - Sticky/manual close: this.toast.warning('Heads up', 'Check your seats', { sticky: true });
     - Custom position: this.toast.info('Offline mode', undefined, { position: 'bottomLeft' });
-    Defaults: topRight position, auto duration per type, sticky off.
+    Defaults: topRight position, auto duration per type.
   */
   private readonly defaultPosition: ToastPosition = 'topRight';
   private readonly defaultDuration: Record<ToastKind, number> = {
-    success: 3400,
-    error: 5200,
-    warning: 4200,
-    info: 3400,
+    success: 5000,
+    error: 5000,
+    warning: 5000,
+    info: 5000,
   };
 
   constructor(private readonly toast: NgToastService) {}
@@ -62,16 +60,14 @@ export class ToastService {
     summary?: string,
     options: ToastOptions = {}
   ): void {
-    const duration = options.sticky
-      ? undefined
-      : options.duration ?? this.defaultDuration[type];
+    const duration = options.duration ?? this.defaultDuration[type] ?? 5000;
 
     const toastConfig = {
       detail,
       summary,
       position: options.position ?? this.defaultPosition,
       duration,
-      sticky: options.sticky ?? false,
+      sticky: false,
     };
 
     switch (type) {

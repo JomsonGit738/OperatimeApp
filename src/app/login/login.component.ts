@@ -8,7 +8,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { ApiservicesService } from '../services/apiservices.service';
+import { ApiservicesService, AuthResponse } from '../services/apiservices.service';
 import {
   SocialAuthService,
   SocialUser,
@@ -108,21 +108,19 @@ export class LoginComponent implements OnInit, OnDestroy {
     const { email, password } = this.loginForm.getRawValue();
 
     this.api.logIn(email, password).subscribe({
-      next: (res: any) => {
-        sessionStorage.setItem('username', res.existingUser.username);
-        sessionStorage.setItem('email', res.existingUser.email);
+      next: (res: AuthResponse) => {
+        sessionStorage.setItem('username', res.user.username);
+        sessionStorage.setItem('email', res.user.email);
         sessionStorage.setItem('token', res.token);
 
-        this.api.sessionUser.next(res.existingUser.username);
+        this.api.sessionUser.next(res.user.username);
 
         this.loginForm.reset();
-        this.toast.success('Login successful!', 'No more waiting, book now!', {
-          duration: 10000,
-        });
+        this.toast.success('Login successful!', 'No more waiting, book now!');
         this.router.navigateByUrl('');
       },
       error: (err: any) => {
-        this.toast.error('Error!', err.error, { duration: 10000 });
+        this.toast.error('Error!', err.error);
         console.log(err);
       },
     });
@@ -155,13 +153,13 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   private handleGoogleSignIn(user: SocialUser): void {
     this.api.GoogleSignIn(user.email, user.name).subscribe({
-      next: (res: any) => {
-        sessionStorage.setItem('username', res.existingUser.username);
-        sessionStorage.setItem('email', res.existingUser.email);
+      next: (res: AuthResponse) => {
+        sessionStorage.setItem('username', res.user.username);
+        sessionStorage.setItem('email', res.user.email);
         sessionStorage.setItem('photo', user.photoUrl);
         sessionStorage.setItem('token', res.token);
 
-        this.api.sessionUser.next(res.existingUser.username);
+        this.api.sessionUser.next(res.user.username);
 
         this.toast.success('Sign in successful', 'No more waiting, book now!');
         setTimeout(() => {
@@ -169,7 +167,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         }, 2000);
       },
       error: (err: any) => {
-        this.toast.error('Error!', err.error, { duration: 10000 });
+        this.toast.error('Error!', err.error);
         console.log(err);
       },
     });

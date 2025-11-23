@@ -5,6 +5,7 @@ import {
   Component,
   OnInit,
 } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ApiservicesService } from '../services/apiservices.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
@@ -323,9 +324,7 @@ export class BookingComponent implements OnInit {
         this.progressEvent = true;
         this.payBoolean = false;
         this.seatContainer = false;
-        this.toast.success('Please wait!', 'Processing your booking...', {
-          duration: 10000,
-        });
+        this.toast.success('Please wait!', 'Processing your booking...');
         //resetting bill details
         this.UserSelectedSeat = 0;
         this.totalSeatAmount = 0;
@@ -400,8 +399,16 @@ export class BookingComponent implements OnInit {
             }, 4000);
           }
         },
-        error: (err: any) => {
+        error: (err: HttpErrorResponse) => {
           console.log(err);
+          if (err.status === 401) {
+            this.toast.error('Session expired', 'Please log in to book seats');
+            this.router.navigate(['/login'], {
+              queryParams: { mode: 'login', returnUrl: this.router.url },
+            });
+          } else {
+            this.toast.error('Booking failed', 'Please try again.');
+          }
         },
       });
   }

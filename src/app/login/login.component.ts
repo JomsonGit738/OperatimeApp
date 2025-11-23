@@ -1,10 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ApiservicesService } from '../services/apiservices.service';
-import { SocialAuthService, SocialUser, GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
+import {
+  SocialAuthService,
+  SocialUser,
+  GoogleSigninButtonModule,
+} from '@abacritt/angularx-social-login';
 import { ToastService } from '../services/toast.service';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -14,23 +23,44 @@ import { Subject, takeUntil } from 'rxjs';
   styleUrls: ['./login.component.css'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, GoogleSigninButtonModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    GoogleSigninButtonModule,
+  ],
 })
 export class LoginComponent implements OnInit, OnDestroy {
-
+  activeForm: 'login' | 'signup' = 'login';
   private readonly destroy$ = new Subject<void>();
   private user: SocialUser | null = null;
+  googlePulse = false;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private api: ApiservicesService,
     private toast: ToastService,
-    private googleAuthService: SocialAuthService
+    private googleAuthService: SocialAuthService,
+    private route: ActivatedRoute
   ) {}
 
-
   ngOnInit(): void {
+    this.activeForm = this.resolveInitialMode();
+    if (this.activeForm === 'login') {
+      this.triggerGooglePulse();
+    }
+
+    this.route.queryParamMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+      const mode = params.get('mode');
+      if (mode === 'signup' || mode === 'login') {
+        this.activeForm = mode;
+        if (mode === 'login') {
+          this.triggerGooglePulse();
+        }
+      }
+    });
+
     this.googleAuthService.authState
       .pipe(takeUntil(this.destroy$))
       .subscribe((user) => {
@@ -50,6 +80,24 @@ export class LoginComponent implements OnInit, OnDestroy {
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]*$/)]],
   });
+
+  readonly signupForm = this.fb.nonNullable.group({
+    username: ['', [Validators.required, Validators.pattern(/^[a-zA-Z ]*$/)]],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]*$/)]],
+  });
+
+  switchForm(mode: 'login' | 'signup'): void {
+    this.activeForm = mode;
+    if (mode === 'login') {
+      this.triggerGooglePulse();
+    }
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { mode },
+      queryParamsHandling: 'merge',
+    });
+  }
 
   logIn(): void {
     if (this.loginForm.invalid) {
@@ -80,6 +128,31 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
   }
 
+  signUp(): void {
+    if (this.signupForm.invalid) {
+      this.signupForm.markAllAsTouched();
+      return;
+    }
+
+    const { username, email, password } = this.signupForm.getRawValue();
+
+    this.api.signUp(username, email, password).subscribe({
+      next: () => {
+        this.toast.success(
+          'Signed up',
+          'Account created. Please log in to continue.'
+        );
+        this.signupForm.reset();
+        this.switchForm('login');
+        this.loginForm.patchValue({ email });
+      },
+      error: (err: any) => {
+        this.toast.error('Error!', err.error ?? 'Sign up failed', { duration: 10000 });
+        console.log(err);
+      },
+    });
+  }
+
   private handleGoogleSignIn(user: SocialUser): void {
     this.api.GoogleSignIn(user.email, user.name).subscribe({
       next: (res: any) => {
@@ -102,4 +175,23 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
   }
 
+  private resolveInitialMode(): 'login' | 'signup' {
+    const routeMode = this.route.snapshot.data['mode'];
+    const queryMode = this.route.snapshot.queryParamMap.get('mode');
+    if (routeMode === 'signup' || queryMode === 'signup') {
+      return 'signup';
+    }
+    return 'login';
+  }
+
+  private triggerGooglePulse(): void {
+    this.googlePulse = false;
+    // small delay to restart animation
+    setTimeout(() => {
+      this.googlePulse = true;
+      setTimeout(() => (this.googlePulse = false), 1200);
+    }, 20);
+  }
 }
+
+// do it with your idea. but remember this is not just showcasing project i want to include in my cv. so, do everything as you said but it should be minimal and safe with best practises in MEAN stack. currenlty only focus on login.

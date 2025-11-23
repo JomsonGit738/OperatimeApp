@@ -1,84 +1,178 @@
-<section class="login-hero">
+<section class="auth-hero">
   <div class="texture"></div>
 
   <div class="hero-grid">
     <div class="hero-copy">
       <p class="eyebrow">Operatime</p>
       <h1>
-        Sign in to keep your
-        <span>watchlist</span>
-        in sync.
+        One doorway for
+        <span>fans and first‑timers.</span>
       </h1>
       <p class="subtitle">
-        Fast checkout, secure sessions, and personalized picks the moment you log in.
+        Log in or create an account without leaving the flow. Pick seats, pay, and get reminders—all in one place.
       </p>
       <div class="pill-row">
-        <span class="pill">Frictionless payments</span>
-        <span class="pill">Seat reminders</span>
-        <span class="pill">Smart suggestions</span>
+        <span class="pill">Instant checkout</span>
+        <span class="pill">Seat alerts</span>
+        <span class="pill">Personal picks</span>
       </div>
     </div>
 
-    <div class="login-card">
-      <div class="card-head">
-        <div>
-          <p class="eyebrow subtle">Welcome back</p>
-          <h2>Login to Operatime</h2>
-          <p class="caption">Enter your credentials to continue</p>
-        </div>
-        <button type="button" class="ghost-link">Forgot password?</button>
+    <div class="auth-card">
+      <div class="switcher">
+        <button
+          type="button"
+          class="switch-btn"
+          [class.active]="activeForm === 'login'"
+          (click)="switchForm('login')"
+        >
+          Login
+        </button>
+        <button
+          type="button"
+          class="switch-btn"
+          [class.active]="activeForm === 'signup'"
+          (click)="switchForm('signup')"
+        >
+          Sign up
+        </button>
+        <span class="switch-indicator" [class.right]="activeForm === 'signup'"></span>
       </div>
 
-      <form [formGroup]="loginForm" (ngSubmit)="logIn()" novalidate>
-        <label class="field">
-          <span>Email address</span>
-          <input
-            name="email"
-            formControlName="email"
-            type="email"
-            placeholder="you@example.com"
-            autocomplete="email"
-          />
-        </label>
-        <p class="field-hint" *ngIf="loginForm.get('email')?.errors && loginForm.get('email')?.touched">
-          Use a valid email format.
-        </p>
-
-        <label class="field">
-          <span>Password</span>
-          <input
-            name="password"
-            formControlName="password"
-            type="password"
-            placeholder="••••••••"
-            autocomplete="current-password"
-          />
-        </label>
-        <p class="field-hint" *ngIf="loginForm.get('password')?.errors && loginForm.get('password')?.touched">
-          Only letters and numbers are allowed.
-        </p>
-
-        <button type="submit" class="primary-btn">Login</button>
-
-        <div class="divider">
-          <span></span>
-          <p>or continue with</p>
-          <span></span>
+      <div class="form-shell" *ngIf="activeForm === 'login'; else signupView">
+        <div class="card-head">
+          <div>
+            <p class="eyebrow subtle">Welcome back</p>
+            <h2>Login to Operatime</h2>
+            <p class="caption">Enter your credentials to continue</p>
+          </div>
         </div>
 
-        <div class="social-row">
-          <asl-google-signin-button
-            theme="filled_black"
-            shape="pill"
-            type="standard"
-            text="continue_with"
-            size="medium"
-          ></asl-google-signin-button>
-        </div>
-      </form>
+        <form [formGroup]="loginForm" (ngSubmit)="logIn()" novalidate>
+          <label class="field">
+            <span>Email address</span>
+            <input
+              name="email"
+              formControlName="email"
+              type="email"
+              placeholder="you@example.com"
+              autocomplete="email"
+            />
+            <small class="field-hint" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+              Use a valid email format.
+            </small>
+          </label>
 
-      <div class="card-footer">
-        <p>New to Operatime? <a routerLink="/signup">Create an account</a></p>
+          <label class="field">
+            <span>Password</span>
+            <input
+              name="password"
+              formControlName="password"
+              type="password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+            />
+            <small
+              class="field-hint"
+              *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+            >
+              Only letters and numbers are allowed.
+            </small>
+          </label>
+
+          <button type="submit" class="primary-btn">Login</button>
+        </form>
+
+        <div class="card-footer inline">
+          <p>New to Operatime?</p>
+          <button type="button" class="linkish" (click)="switchForm('signup')">Create an account</button>
+        </div>
+      </div>
+
+      <ng-template #signupView>
+        <div class="card-head">
+          <div>
+            <p class="eyebrow subtle">Join the crew</p>
+            <h2>Create your account</h2>
+            <p class="caption">Save seats, sync devices, and get alerts.</p>
+          </div>
+        </div>
+
+        <form [formGroup]="signupForm" (ngSubmit)="signUp()" novalidate>
+          <label class="field">
+            <span>Username</span>
+            <input
+              name="username"
+              formControlName="username"
+              type="text"
+              placeholder="Jane Doe"
+              autocomplete="name"
+            />
+            <small
+              class="field-hint"
+              *ngIf="signupForm.get('username')?.invalid && signupForm.get('username')?.touched"
+            >
+              Letters and spaces only.
+            </small>
+          </label>
+
+          <label class="field">
+            <span>Email address</span>
+            <input
+              name="email"
+              formControlName="email"
+              type="email"
+              placeholder="you@example.com"
+              autocomplete="email"
+            />
+            <small
+              class="field-hint"
+              *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched"
+            >
+              Use a valid email format.
+            </small>
+          </label>
+
+          <label class="field">
+            <span>Password</span>
+            <input
+              name="password"
+              formControlName="password"
+              type="password"
+              placeholder="Create a password"
+              autocomplete="new-password"
+            />
+            <small
+              class="field-hint"
+              *ngIf="signupForm.get('password')?.invalid && signupForm.get('password')?.touched"
+            >
+              Only letters and numbers are allowed.
+            </small>
+          </label>
+
+          <button type="submit" class="primary-btn">Create account</button>
+        </form>
+
+        <div class="card-footer inline">
+          <p>Already with us?</p>
+          <button type="button" class="linkish" (click)="switchForm('login')">Login instead</button>
+        </div>
+      </ng-template>
+
+      <div class="divider shared-divider">
+        <span></span>
+        <p>or continue with</p>
+        <span></span>
+      </div>
+
+      <div class="social-row shared-social" [class.pulse]="googlePulse">
+        <asl-google-signin-button
+          theme="filled_black"
+          shape="pill"
+          type="standard"
+          text="continue_with"
+          size="medium"
+        ></asl-google-signin-button>
       </div>
     </div>
   </div>

@@ -1,4 +1,4 @@
-.login-hero {
+.auth-hero {
   position: relative;
   min-height: 100vh;
   display: grid;
@@ -25,7 +25,7 @@
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-columns: 1.05fr 0.95fr;
   gap: clamp(24px, 4vw, 48px);
   align-items: center;
 }
@@ -82,8 +82,8 @@
   background: rgba(255, 255, 255, 0.04);
 }
 
-.login-card {
-  background: rgba(15, 15, 24, 0.8);
+.auth-card {
+  background: rgba(15, 15, 24, 0.82);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 18px;
   padding: clamp(20px, 3vw, 28px);
@@ -92,6 +92,55 @@
   display: grid;
   gap: 18px;
   color: #e7e8ec;
+}
+
+.switcher {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.switch-btn {
+  position: relative;
+  z-index: 1;
+  padding: 14px 12px;
+  background: transparent;
+  border: none;
+  color: #cfd3dc;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.switch-btn.active {
+  color: #0b0b10;
+}
+
+.switch-indicator {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc(50% - 6px);
+  border-radius: 12px;
+  background: linear-gradient(120deg, #ff4356 0%, #ff1f47 100%);
+  box-shadow: 0 12px 28px rgba(255, 67, 86, 0.3);
+  transition: transform 0.25s ease;
+}
+
+.switch-indicator.right {
+  transform: translateX(100%);
+}
+
+.form-shell {
+  display: grid;
+  gap: 16px;
 }
 
 .card-head {
@@ -212,15 +261,59 @@ asl-google-signin-button {
   filter: drop-shadow(0 14px 35px rgba(0, 0, 0, 0.35));
 }
 
-.card-footer {
-  text-align: center;
-  color: #c3c7d0;
-  font-size: 14px;
+.shared-divider {
+  margin-top: 4px;
 }
 
-.card-footer a {
+.shared-social {
+  padding-bottom: 0;
+}
+
+.shared-social.pulse {
+  animation: pulse 1s ease;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #c3c7d0;
+  font-size: 14px;
+  text-align: center;
+}
+
+.card-footer p {
+  margin: 0;
+}
+
+.card-footer.inline {
+  justify-content: flex-start;
+  align-items: center;
+}
+
+
+.linkish {
+  background: none;
+  border: none;
   color: #ff4356;
   font-weight: 700;
+  cursor: pointer;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 14px 35px rgba(0, 0, 0, 0.35));
+  }
+  50% {
+    transform: scale(1.04);
+    filter: drop-shadow(0 18px 40px rgba(255, 67, 86, 0.35));
+  }
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 14px 35px rgba(0, 0, 0, 0.35));
+  }
 }
 
 @media (max-width: 960px) {
@@ -232,7 +325,7 @@ asl-google-signin-button {
     order: 2;
   }
 
-  .login-card {
+  .auth-card {
     order: 1;
   }
 }

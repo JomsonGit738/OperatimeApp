@@ -29,44 +29,27 @@
   backdrop-filter: blur(6px);
 }
 
-.loginbutton {
-  background-color: rgb(200, 1, 1);
-  color: white;
-  border-radius: 3px;
-  margin-right: 10px;
+.access-button {
+  background: linear-gradient(120deg, #ff4356 0%, #ff1f47 100%);
+  color: #fff;
   border: none;
-  padding: 5px 20px;
-  border-radius: 3px;
-  font-weight: normal;
-}
-.signupbutton {
-  background-color: rgb(255, 255, 255);
-  color: rgb(0, 0, 0);
-  border-radius: 3px;
-  margin-right: 10px;
-  border: none;
-  padding: 5px 15px;
-  border-radius: 3px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  box-shadow: 0 10px 24px rgba(255, 67, 86, 0.3);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
 }
 
-.loginbutton,
-.signupbutton {
-  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease,
-    transform 0.2s ease;
-}
-
-.loginbutton:hover {
-  background-color: rgb(230, 40, 40);
-  color: white;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+.access-button:hover {
   transform: translateY(-1px);
+  box-shadow: 0 12px 30px rgba(255, 67, 86, 0.35);
+  filter: brightness(1.02);
 }
 
-.signupbutton:hover {
-  background-color: rgba(255, 255, 255, 0.9);
-  color: rgb(200, 1, 1);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
-  transform: translateY(-1px);
+.access-button:active {
+  transform: translateY(0);
+  box-shadow: 0 10px 22px rgba(255, 67, 86, 0.28);
 }
 
 .user-menu-group {

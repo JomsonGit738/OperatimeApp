@@ -9,7 +9,7 @@ import { ThemePalette } from '@angular/material/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
+import { BehaviorSubject, defer, Observable, Subject, of } from 'rxjs';
 import {
   catchError,
   distinctUntilChanged,
@@ -76,6 +76,12 @@ export class SearchComponent implements OnDestroy {
     query: '',
     page: 1,
   });
+  private readonly initialMovies$ = defer(() =>
+    this.api.getMovies<MovieSummary>()
+  ).pipe(
+    map((response) => (response.results ?? []).filter(this.hasPoster)),
+    shareReplay({ bufferSize: 1, refCount: false })
+  );
 
   readonly vm$: Observable<SearchViewModel> = this.searchParams$.pipe(
     distinctUntilChanged(
@@ -117,7 +123,6 @@ export class SearchComponent implements OnDestroy {
       this.toast.error('Empty search', 'Type a movie name to search.', {
         duration: 2500,
       });
-      this.updateSearchParams({ query: '', page: 1 });
       return;
     }
     this.updateSearchParams({ query, page: 1 });
@@ -178,12 +183,33 @@ export class SearchComponent implements OnDestroy {
     page,
   }: SearchParams): Observable<Partial<SearchViewModel>> {
     if (!query) {
-      return of(this.buildState());
+      return this.initialMovies$.pipe(
+        map((results) => ({
+          query: '',
+          results,
+          totalPages: 0,
+          totalResults: results.length,
+          page: 1,
+          pages: [],
+          showInitialHint: false,
+          showNoResults: results.length === 0,
+          errorMessage: null,
+        })),
+        catchError((error) => {
+          console.error(error);
+          return of(
+            this.buildState({
+              errorMessage: 'Unable to load suggested movies right now.',
+              showInitialHint: false,
+            })
+          );
+        })
+      );
     }
 
     return this.api.searchMovies<MovieSummary>(query, page).pipe(
       map((res: MoviesResponse<MovieSummary>) => ({
-        results: res.results ?? [],
+        results: (res.results ?? []).filter(this.hasPoster),
         totalPages: res.total_pages ?? 0,
         totalResults: res.total_results ?? 0,
         page: res.page ?? page,
@@ -249,6 +275,9 @@ export class SearchComponent implements OnDestroy {
       ...overrides,
     };
   }
+
+  private readonly hasPoster = (movie: MovieSummary): boolean =>
+    Boolean(movie.poster_path?.trim());
 
   private updateSearchParams(params: SearchParams): void {
     this.searchParams$.next(params);

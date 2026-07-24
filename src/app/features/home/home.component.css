@@ -21,7 +21,14 @@
   padding: 10px 25px;
   gap: 20px;
   overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   /* background-color: aqua; */
+}
+
+.mContainerList::-webkit-scrollbar {
+  display: none;
 }
 
 .card {

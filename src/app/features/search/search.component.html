@@ -1,13 +1,9 @@
 <ng-container *ngIf="vm$ | async as vm">
-  <mat-progress-bar
-    *ngIf="vm.isLoading"
-    [color]="color"
-    mode="indeterminate"
-  ></mat-progress-bar>
   <div class="searchContianer">
     <main>
       <section class="search-hero container px-0">
         <div class="search-hero__content">
+          <div class="search-hero__main">
           <div class="search-hero__text">
             <p class="eyebrow">Discover movies</p>
             <h1>Search Movies</h1>
@@ -40,6 +36,13 @@
               >Pro tip: hit Enter to search faster.</small
             >
           </div>
+          </div>
+          <mat-progress-bar
+            class="search-hero__progress"
+            *ngIf="vm.isLoading"
+            [color]="color"
+            mode="indeterminate"
+          ></mat-progress-bar>
         </div>
       </section>
 

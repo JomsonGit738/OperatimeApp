@@ -52,8 +52,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     --toast-border: rgba(255, 255, 255, 0.08);
     --toast-blur: 10px;
     --toast-bg: linear-gradient(135deg, #0f172a 0%, #0b1221 100%);
-    --toast-text: #e5e7eb;
-    --toast-subtext: #9ca3af;
+    --toast-text: #fff;
+    --toast-subtext: #fff;
     --toast-success: #22c55e;
     --toast-error: #f87171;
     --toast-warning: #fbbf24;
@@ -152,13 +152,14 @@ ng-toast .container-2 {
 
 ng-toast .container-2 p:first-child {
     margin: 0;
+    color: #fff !important;
     font-weight: 700;
     letter-spacing: 0.01em;
 }
 
 ng-toast .container-2 p:last-child {
     margin: 0;
-    color: var(--toast-subtext);
+    color: #fff !important;
     font-size: 0.92rem;
 }
 

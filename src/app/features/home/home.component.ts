@@ -90,8 +90,6 @@ export class HomeComponent implements OnInit {
     // if (id == null) {
     //   return;
     // }
-    // localStorage.setItem('bookId', id.toString());
-    // sessionStorage.setItem('mTitle', title);
     this.router.navigate([`/booking/${id}`], { queryParams: { title } });
   }
 

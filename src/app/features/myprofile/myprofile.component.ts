@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Observable, map, shareReplay, throwError } from 'rxjs';
+import { Observable, map, shareReplay } from 'rxjs';
 import { ApiservicesService } from '../../core/services/apiservices.service';
 import { LoaderComponent } from 'src/shared/components/loader/loader.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -15,8 +15,6 @@ import { TicketQrDialogComponent, TicketQrDialogData } from './ticket-qr-dialog/
   imports: [CommonModule, LoaderComponent, MatDialogModule],
 })
 export class MyprofileComponent {
-  private readonly storedEmail = sessionStorage.getItem('email');
-  private readonly storedUserImage = sessionStorage.getItem('photo');
   private readonly todayDateString = this.buildTodayDateString();
 
   readonly imageBASEurl = `${this.api.imageBASEurl}original`;
@@ -28,7 +26,7 @@ export class MyprofileComponent {
       tickets: [...user.tickets].reverse(),
       ticketCount: user.tickets.length,
       hasTickets: user.tickets.length > 0,
-      userImage: this.storedUserImage,
+      userImage: user.photo || null,
       userInitial: this.buildInitial(user.username),
     })),
     shareReplay({ bufferSize: 1, refCount: true })
@@ -64,10 +62,7 @@ export class MyprofileComponent {
   }
 
   private loadUserProfile(): Observable<UserProfile> {
-    if (!this.storedEmail) {
-      return throwError(() => new Error('No active session found for user profile.'));
-    }
-    return this.api.getUserDetails(this.storedEmail) as Observable<UserProfile>;
+    return this.api.getCurrentUser() as Observable<UserProfile>;
   }
 
   private buildInitial(username: string | undefined | null): string {
@@ -123,6 +118,7 @@ interface UserProfile {
   username: string;
   email: string;
   tickets: Ticket[];
+  photo?: string;
 }
 
 interface ProfileViewModel {

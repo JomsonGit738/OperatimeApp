@@ -41,8 +41,8 @@
         <li><a routerLink="/booking" class="nav-link px-2 text-white"></a></li>
       </ul>
 
-      <div *ngIf="!userStatus" class="text-end d-none d-lg-block">
-        <button routerLink="/login" class="access-button">Login / Sign up</button>
+      <div *ngIf="!userStatus && !isAuthRoute" class="text-end d-none d-lg-block">
+        <button routerLink="/login" class="access-button">Get Started</button>
       </div>
 
       <!-- user status -->

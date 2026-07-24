@@ -13,7 +13,7 @@
 .re-image:hover{
     transform: translateY(-6px) scale(1.05);
     box-shadow: 0 18px 35px rgba(0, 0, 0, 0.45);
-    outline: 2px solid rgba(218, 28, 28, 0.6);
+    outline: 2px solid rgba(var(--accent-red-rgb), 0.5);
 }
 
 .re-image--placeholder {
@@ -30,7 +30,7 @@
 }
 
 .re-image--placeholder:hover {
-    border-color: rgba(218, 28, 28, 0.6);
+    border-color: rgba(var(--accent-red-rgb), 0.5);
     transform: translateY(-4px);
     box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);
 }
@@ -107,7 +107,7 @@
 
 .search-input:focus-within {
     border-color: rgba(255, 255, 255, 0.45);
-    box-shadow: 0 0 0 0.2rem rgba(218, 28, 28, 0.15);
+    box-shadow: 0 0 0 0.2rem rgba(var(--accent-red-rgb), 0.12);
 }
 
 .search-input__icon {
@@ -136,7 +136,7 @@
     border-radius: 999px;
     padding: 10px 18px;
     color: white;
-    background: linear-gradient(135deg, #da1c1c, #ff4d4d);
+    background: linear-gradient(135deg, var(--accent-red), var(--accent-red-deep));
     font-weight: 600;
     text-transform: uppercase;
     font-size: 0.85rem;
@@ -147,7 +147,7 @@
 
 .search-input__button:hover {
     transform: translateY(-1px);
-    box-shadow: 0 8px 20px rgba(218, 28, 28, 0.35);
+    box-shadow: 0 8px 20px rgba(var(--accent-red-rgb), 0.22);
 }
 
 .search-input__button:focus-visible {
@@ -193,7 +193,7 @@
 .paginator-btn,
 .paginator-page {
     border: none;
-    background-color: rgba(92, 10, 10, 0.75);
+    background-color: rgba(74, 12, 22, 0.82);
     color: white;
     padding: 8px 12px;
     border-radius: 6px;
@@ -209,13 +209,13 @@
 }
 
 .paginator-page.active {
-    background-color: #da1c1c;
-    box-shadow: 0 0 12px rgba(218, 28, 28, 0.7);
+    background-color: var(--accent-red);
+    box-shadow: 0 0 12px rgba(var(--accent-red-rgb), 0.42);
 }
 
 .paginator-btn:not([disabled]):hover,
 .paginator-page:not([disabled]):hover {
-    background-color: #b01313;
+    background-color: var(--accent-red-deep);
     transform: translateY(-1px);
 }
 
@@ -271,5 +271,5 @@
     background-color: rgba(255, 255, 255, 0.15);
     border-color: rgba(255, 255, 255, 0.45);
     color: #fff;
-    box-shadow: 0 0 0 0.2rem rgba(218, 28, 28, 0.15);
+    box-shadow: 0 0 0 0.2rem rgba(var(--accent-red-rgb), 0.12);
 }

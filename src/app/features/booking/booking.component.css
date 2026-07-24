@@ -10,7 +10,6 @@
     align-items: center;
     gap: 20px;
 }
-
 /* /////////////////////////////////////////// */
 .detailsContainer{
   background-color: #c75a5a00;
@@ -183,7 +182,7 @@
 
 .proceed{
   border-radius: 8px;
-  background-color: rgb(176, 28, 28);
+  background-color: var(--accent-red);
   color: #fff;
   border: none;
   padding: 8px 0px;
@@ -261,7 +260,7 @@
   .seat:not(.occupied):hover {
     cursor: pointer;
     transform: scale(1.2);
-    background-color: rgb(187, 5, 5);
+    background-color: var(--accent-red-deep);
   }
 
   .showcase .seat:not(.occupied):hover {
@@ -409,4 +408,3 @@
     border-radius: 0;
   }
 }
-  

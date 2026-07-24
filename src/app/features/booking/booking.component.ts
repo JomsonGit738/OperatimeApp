@@ -108,7 +108,6 @@ export class BookingComponent implements OnInit {
 
   //loading movie details in booking component
   loadBookingMovie(id: string) {
-    // let id = localStorage.getItem('bookId');
     return this.api.getMovieById(id).pipe(
       tap((res) => {
         this.movie = res;
@@ -206,7 +205,7 @@ export class BookingComponent implements OnInit {
       );
     }
     //if user could not signed in
-    else if (!sessionStorage.getItem('email')) {
+    else if (!this.api.sessionUser.value) {
       this.toast.error(
         'Log in!',
         'Please login to continue booking'
@@ -278,7 +277,6 @@ export class BookingComponent implements OnInit {
 
   //routing view to details component for Details of Movie
   routeWithId(id: string) {
-    // localStorage.setItem('mId', id);
     this.router.navigateByUrl(`/movie/${id}`);
   }
 
@@ -360,7 +358,6 @@ export class BookingComponent implements OnInit {
   saveSeatsInDB() {
     let currentDate = this.newDate.toLocaleDateString('en-GB');
     let currentTime = this.newDate.toLocaleTimeString();
-    let email = sessionStorage.getItem('email');
     const movietitle = this.movie.title;
     let mimage = this.movie.poster_path;
     //removing fetched seats from selected seat array
@@ -368,15 +365,6 @@ export class BookingComponent implements OnInit {
       return this.seater.indexOf(val) == -1;
     });
     let operaId = this.movie.id.toString() + '@' + currentDate;
-    console.log(
-      currentDate,
-      operaId,
-      movietitle,
-      seats,
-      email,
-      currentTime,
-      mimage
-    );
     //OperaId
 
     this.api
@@ -385,7 +373,6 @@ export class BookingComponent implements OnInit {
         operaId,
         movietitle,
         seats,
-        email,
         currentTime,
         mimage
       )

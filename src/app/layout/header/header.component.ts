@@ -9,10 +9,11 @@ import {
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ApiservicesService } from '../../core/services/apiservices.service';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, Subscription } from 'rxjs';
 import { SidebarService } from '../../core/services/sidebar.service';
 import { ToastService } from '../../core/services/toast.service';
+import { SocialAuthService } from '@abacritt/angularx-social-login';
 
 @Component({
   selector: 'app-header',
@@ -28,11 +29,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
   userImage: string | null = null;
   userImageStatus = false;
   userStatus = false;
+  isAuthRoute = false;
   isSidebarOpen = false;
   isHeaderVisible = true;
   isAtTop = true;
   private sessionSubscription?: Subscription;
   private sidebarSubscription?: Subscription;
+  private routeSubscription?: Subscription;
   private lastScrollTop = 0;
   private readonly hideThreshold = 20;
 
@@ -41,31 +44,36 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly toast: ToastService,
     private readonly cdr: ChangeDetectorRef,
-    private readonly sidebarService: SidebarService
+    private readonly sidebarService: SidebarService,
+    private readonly googleAuthService: SocialAuthService
   ) {}
 
   ngOnInit(): void {
     this.configureSessionUser();
     this.subscribeToSidebar();
+    this.subscribeToRoute();
   }
 
   ngOnDestroy(): void {
     this.sessionSubscription?.unsubscribe();
     this.sidebarSubscription?.unsubscribe();
+    this.routeSubscription?.unsubscribe();
   }
 
   configureSessionUser(): void {
     this.sessionSubscription = this.api.sessionUser.subscribe({
-      next: (sessionUsername: string) => {
-        const storedUsername = sessionUsername || sessionStorage.getItem('username');
-        this.userStatus = Boolean(storedUsername);
-        this.username = storedUsername;
-
-        const storedPhoto = sessionStorage.getItem('photo');
-        this.userImageStatus = Boolean(storedPhoto);
-        this.userImage = storedPhoto;
+      next: (user) => {
+        this.userStatus = Boolean(user);
+        this.username = user?.username ?? null;
+        this.userImageStatus = Boolean(user?.photo);
+        this.userImage = user?.photo ?? null;
         this.cdr.markForCheck();
       },
+    });
+
+    // Guest discovery returns 200/null, so public pages never show an auth failure.
+    this.api.getOptionalSession().subscribe({
+      error: () => this.api.sessionUser.next(null),
     });
   }
 
@@ -118,13 +126,35 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   SignOut(): void {
-    this.api.clearSession();
-    this.userStatus = false;
-    this.userImageStatus = false;
-    this.username = null;
-    this.userImage = null;
-    this.toast.success('Logged Out', 'Have a nice day!');
-    this.router.navigateByUrl('');
+    this.api.logOut().subscribe({
+      next: async () => {
+        try {
+          // Also clear Google's client state so authState cannot replay the old user.
+          await this.googleAuthService.signOut();
+        } catch {
+          // Password users have no Google session, which is safe to ignore.
+        } finally {
+          this.toast.success('Logged Out', 'Have a nice day!');
+          this.router.navigateByUrl('');
+        }
+      },
+      error: () => {
+        this.toast.error('Logout failed', 'Please try again.');
+      },
+    });
+  }
+
+  private subscribeToRoute(): void {
+    const updateAuthRoute = (url: string) => {
+      const path = url.split('?')[0];
+      this.isAuthRoute = path === '/login' || path === '/signup';
+      this.cdr.markForCheck();
+    };
+
+    updateAuthRoute(this.router.url);
+    this.routeSubscription = this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe((event) => updateAuthRoute(event.urlAfterRedirects));
   }
 
 

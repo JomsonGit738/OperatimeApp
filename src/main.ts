@@ -13,12 +13,13 @@ import { NgToastModule } from 'ng-angular-popup';
 
 import { AppComponent } from './app/app.component';
 import { appRoutes } from './app/app.routes';
-import { authInterceptor } from './app/core/http/auth.interceptor';
+import { apiCredentialsInterceptor } from './app/core/http/auth.interceptor';
+import { environment } from './environments/environment';
 
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(appRoutes),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([apiCredentialsInterceptor])),
     provideAnimations(),
     importProvidersFrom(NgToastModule, SocialLoginModule, GoogleSigninButtonModule),
     {
@@ -29,7 +30,13 @@ bootstrapApplication(AppComponent, {
           {
             id: GoogleLoginProvider.PROVIDER_ID,
             provider: new GoogleLoginProvider(
-              '230963712555-9tre1716lgj5bfbhptgqabudab3jjqnf.apps.googleusercontent.com'
+              environment.googleClientId,
+              {
+                // One Tap defaults to enabled in this library and can sign a user
+                // back in when they merely revisit the login page.
+                oneTapEnabled: false,
+                prompt: 'select_account',
+              }
             ),
           },
         ],

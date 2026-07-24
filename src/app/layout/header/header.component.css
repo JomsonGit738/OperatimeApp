@@ -30,26 +30,26 @@
 }
 
 .access-button {
-  background: linear-gradient(120deg, #ff4356 0%, #ff1f47 100%);
+  background: linear-gradient(120deg, var(--accent-red) 0%, var(--accent-red-deep) 100%);
   color: #fff;
   border: none;
   padding: 10px 22px;
   border-radius: 999px;
   font-weight: 700;
   letter-spacing: 0.01em;
-  box-shadow: 0 10px 24px rgba(255, 67, 86, 0.3);
+  box-shadow: 0 10px 24px rgba(var(--accent-red-rgb), 0.2);
   transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
 }
 
 .access-button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 12px 30px rgba(255, 67, 86, 0.35);
+  box-shadow: 0 12px 30px rgba(var(--accent-red-rgb), 0.24);
   filter: brightness(1.02);
 }
 
 .access-button:active {
   transform: translateY(0);
-  box-shadow: 0 10px 22px rgba(255, 67, 86, 0.28);
+  box-shadow: 0 10px 22px rgba(var(--accent-red-rgb), 0.18);
 }
 
 .user-menu-group {
@@ -92,7 +92,7 @@
 .userIcon {
   margin-left: 10px;
   background-color: white;
-  color: red;
+  color: var(--accent-red-hover);
   width: 35px;
   height: 35px;
   border-radius: 50%;

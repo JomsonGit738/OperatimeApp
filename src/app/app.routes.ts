@@ -14,7 +14,7 @@ export const appRoutes: Routes = [
   { path: 'movie/:id', component: DetailsComponent },
   { path: 'signup', component: LoginComponent, data: { mode: 'signup' } },
   { path: 'login', component: LoginComponent },
-  { path: 'booking/:id', component: BookingComponent },
+  { path: 'booking/:id', component: BookingComponent, canActivate: [authGuard] },
   { path: 'profile', component: MyprofileComponent, canActivate: [authGuard] },
   { path: 'search', component: SearchComponent },
 ];

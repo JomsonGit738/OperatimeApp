@@ -2,7 +2,7 @@
   position: relative;
   min-height: 100vh;
   padding: 80px clamp(18px, 4vw, 48px) 48px;
-  background: radial-gradient(circle at 10% 20%, rgba(229, 9, 20, 0.12), transparent 30%),
+  background: radial-gradient(circle at 10% 20%, rgba(var(--accent-red-rgb), 0.09), transparent 30%),
     radial-gradient(circle at 80% 0%, rgba(255, 255, 255, 0.08), transparent 28%),
     #0b0b10;
   color: #e7e8ec;
@@ -11,7 +11,7 @@
 .texture {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 60% 60%, rgba(255, 67, 86, 0.12), transparent 34%);
+  background: radial-gradient(circle at 60% 60%, rgba(var(--accent-red-rgb), 0.09), transparent 34%);
   pointer-events: none;
 }
 
@@ -123,7 +123,7 @@
 }
 
 .avatar-initial {
-  background: linear-gradient(140deg, #ff4356 0%, #ff1f47 100%);
+  background: linear-gradient(140deg, var(--accent-red) 0%, var(--accent-red-deep) 100%);
   color: #fff;
 }
 
@@ -242,13 +242,13 @@
 }
 
 .time-chip {
-  background: linear-gradient(120deg, #ff4356 0%, #ff1f47 100%);
+  background: linear-gradient(120deg, var(--accent-red) 0%, var(--accent-red-deep) 100%);
   color: #fff;
   padding: 6px 12px;
   border-radius: 999px;
   font-weight: 700;
   letter-spacing: 0.02em;
-  box-shadow: 0 12px 28px rgba(255, 67, 86, 0.2);
+  box-shadow: 0 12px 28px rgba(var(--accent-red-rgb), 0.14);
 }
 
 .seat-chips {
@@ -259,7 +259,7 @@
 
 .seat-chip {
   background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 67, 86, 0.35);
+  border: 1px solid rgba(var(--accent-red-rgb), 0.28);
   color: #fff;
   padding: 6px 10px;
   border-radius: 10px;
@@ -285,8 +285,8 @@
 
 .ghost-btn:hover {
   transform: translateY(-1px);
-  border-color: rgba(255, 67, 86, 0.45);
-  box-shadow: 0 12px 28px rgba(255, 67, 86, 0.2);
+  border-color: rgba(var(--accent-red-rgb), 0.36);
+  box-shadow: 0 12px 28px rgba(var(--accent-red-rgb), 0.14);
 }
 
 .expired {

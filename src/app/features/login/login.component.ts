@@ -110,15 +110,11 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     this.api.logIn(email, password).subscribe({
       next: (res: AuthResponse) => {
-        sessionStorage.setItem('username', res.user.username);
-        sessionStorage.setItem('email', res.user.email);
-        sessionStorage.setItem('token', res.token);
-
-        this.api.sessionUser.next(res.user.username);
+        this.api.setSessionUser(res.user);
 
         this.loginForm.reset();
         this.toast.success('Login successful!', 'No more waiting, book now!');
-        this.router.navigateByUrl('');
+        this.navigateAfterLogin();
       },
       error: (err: any) => {
         this.toast.error('Error!', err.error);
@@ -153,18 +149,18 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   private handleGoogleSignIn(user: SocialUser): void {
-    this.api.GoogleSignIn(user.email, user.name).subscribe({
-      next: (res: AuthResponse) => {
-        sessionStorage.setItem('username', res.user.username);
-        sessionStorage.setItem('email', res.user.email);
-        sessionStorage.setItem('photo', user.photoUrl);
-        sessionStorage.setItem('token', res.token);
+    if (!user.idToken) {
+      this.toast.error('Google sign-in failed', 'Google did not return an ID token.');
+      return;
+    }
 
-        this.api.sessionUser.next(res.user.username);
+    this.api.GoogleSignIn(user.idToken).subscribe({
+      next: (res: AuthResponse) => {
+        this.api.setSessionUser(res.user);
 
         this.toast.success('Sign in successful', 'No more waiting, book now!');
         setTimeout(() => {
-          this.router.navigateByUrl('/');
+          this.navigateAfterLogin();
         }, 2000);
       },
       error: (err: any) => {
@@ -181,6 +177,16 @@ export class LoginComponent implements OnInit, OnDestroy {
       return 'signup';
     }
     return 'login';
+  }
+
+  private navigateAfterLogin(): void {
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    // Only internal Angular routes are accepted as post-login destinations.
+    const destination =
+      returnUrl?.startsWith('/') && !returnUrl.startsWith('//')
+        ? returnUrl
+        : '/';
+    this.router.navigateByUrl(destination);
   }
 
   private triggerGooglePulse(): void {

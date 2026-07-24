@@ -3,10 +3,10 @@
   aspect-ratio: 1;
   border-radius: 50%;
   border: 6px solid rgba(255, 255, 255, 0.12);
-  border-top-color: #da1c1c;
-  border-bottom-color: #da1c1c;
+  border-top-color: var(--accent-red);
+  border-bottom-color: var(--accent-red);
   position: relative;
-  box-shadow: 0 0 18px rgba(218, 28, 28, 0.45);
+  box-shadow: 0 0 18px rgba(var(--accent-red-rgb), 0.3);
   animation: loader-spin 1s linear infinite;
 }
 
@@ -18,14 +18,14 @@
   border-radius: 50%;
   border: 6px solid transparent;
   border-left-color: rgba(255, 255, 255, 0.12);
-  border-right-color: rgba(218, 28, 28, 0.85);
+  border-right-color: rgba(var(--accent-red-rgb), 0.75);
   animation: loader-spin 2s linear infinite;
 }
 
 .loader::after {
   inset: -18px;
   border-left-color: rgba(255, 255, 255, 0.05);
-  border-right-color: rgba(255, 69, 69, 0.65);
+  border-right-color: rgba(var(--accent-red-rgb), 0.55);
   animation-duration: 3.5s;
 }
 

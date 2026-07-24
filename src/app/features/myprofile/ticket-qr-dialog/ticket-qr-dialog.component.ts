@@ -25,7 +25,7 @@ export interface TicketQrDialogData {
         gap: 8px;
         padding: 12px;
         color: #e7e8ec;
-        background: radial-gradient(circle at 20% 20%, rgba(255, 67, 86, 0.12), transparent 32%),
+        background: radial-gradient(circle at 20% 20%, rgba(var(--accent-red-rgb), 0.09), transparent 32%),
           #0f1018;
       }
       h3 {

@@ -175,8 +175,8 @@
     object-fit: cover;
   }
   .poster--active {
-    border-color: rgba(218, 28, 28, 0.9);
-    box-shadow: 0 0 25px rgba(218, 28, 28, 0.45);
+    border-color: rgba(var(--accent-red-rgb), 0.8);
+    box-shadow: 0 0 25px rgba(var(--accent-red-rgb), 0.28);
     transform: translateY(-6px);
   }
   .poster--active img {

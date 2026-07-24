@@ -30,9 +30,9 @@ export interface AuthUser {
   username: string;
   email: string;
   tickets: unknown[];
+  photo?: string;
 }
 
 export interface AuthResponse {
   user: AuthUser;
-  token: string;
 }

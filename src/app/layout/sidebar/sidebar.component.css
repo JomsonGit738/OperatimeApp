@@ -46,8 +46,7 @@
   box-shadow: 0 0 24px 5px rgba(0, 0, 0, 0.85);
 }
 
-.sidebar-close:focus-visible,
-.sidebar i:focus-visible {
+.sidebar-action:focus-visible {
   outline: 2px solid #fff;
   outline-offset: 4px;
 }
@@ -62,6 +61,49 @@
   gap: 70px;
 }
 
-.sidebar i {
+.sidebar-action {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
   cursor: pointer;
+}
+
+.sidebar-action:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* A visible tooltip explains icon-only controls to mouse and keyboard users. */
+.sidebar-action::after {
+  position: absolute;
+  left: calc(100% + 12px);
+  top: 50%;
+  z-index: 110;
+  padding: 7px 10px;
+  color: #fff;
+  background: #17171d;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 7px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  content: attr(data-tooltip);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(5px, -50%);
+  transition: opacity 140ms ease, transform 140ms ease;
+  white-space: nowrap;
+}
+
+.sidebar-action:hover::after,
+.sidebar-action:focus-visible::after {
+  opacity: 1;
+  transform: translate(0, -50%);
 }

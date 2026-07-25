@@ -14,7 +14,9 @@ export const appRoutes: Routes = [
   { path: 'movie/:id', component: DetailsComponent },
   { path: 'signup', component: LoginComponent, data: { mode: 'signup' } },
   { path: 'login', component: LoginComponent },
-  { path: 'booking/:id', component: BookingComponent, canActivate: [authGuard] },
+  // Seat availability is public. Authentication is requested only when the
+  // visitor continues to checkout, after they have found suitable seats.
+  { path: 'booking/:id', component: BookingComponent },
   { path: 'profile', component: MyprofileComponent, canActivate: [authGuard] },
   { path: 'search', component: SearchComponent },
 ];

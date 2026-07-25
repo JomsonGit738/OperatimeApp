@@ -50,6 +50,7 @@ export class BookingComponent implements OnInit {
   seatContainer: boolean = false;
   color: ThemePalette = 'warn';
   payBoolean: boolean = false;
+  showPayPalSandbox = false;
   today: any = '';
   UserSelectedSeat: number = 0;
   perSeatAmount: number = 5;
@@ -69,6 +70,8 @@ export class BookingComponent implements OnInit {
   newArray: number[] = [];
   movieID = '';
   movieTitle = '';
+  checkoutAuthPending = false;
+  private readonly seatsToRestore = new Set<number>();
 
   // stream of { id, title }
   readonly routeParams$ = combineLatest([
@@ -103,6 +106,20 @@ export class BookingComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Preserve a guest's chosen seats across the login round-trip. Occupied
+    // seats are checked again before any selection is restored.
+    const restoredSeats = this.route.snapshot.queryParamMap.get('seats') ?? '';
+    restoredSeats
+      .split(',')
+      .map((seat) => Number(seat))
+      .filter(
+        (seat) =>
+          Number.isInteger(seat) &&
+          seat >= 1 &&
+          seat <= this.totalSeatCount
+      )
+      .forEach((seat) => this.seatsToRestore.add(seat));
+
     this.getSeats();
   }
 
@@ -176,11 +193,10 @@ export class BookingComponent implements OnInit {
     this.seats.forEach((seat) => {
       const isOccupied = occupiedSeatIds.has(seat.id);
       seat.occupied = isOccupied;
-      if (isOccupied) {
-        seat.selected = false;
-      }
+      seat.selected = !isOccupied && this.seatsToRestore.has(seat.id);
     });
 
+    this.seatsToRestore.clear();
     this.UserSelectedSeat = this.seats.filter((seat) => seat.selected).length;
     this.totalSeatAmount = this.UserSelectedSeat * this.perSeatAmount;
     this.buildSeatRows();
@@ -193,26 +209,9 @@ export class BookingComponent implements OnInit {
       .filter((seat) => seat.selected)
       .map((seat) => seat.id.toString());
 
-    //if ticket counter is closed
-    var closingHour = new Date();
-    closingHour.setHours(20, 0, 0); // 08:00:00 pm (20:00:00 pm)
-    var openingHour = new Date();
-    openingHour.setHours(24, 0, 0); // 12.00:00 pm (24:00:00 pm)
-    if (this.newDate >= closingHour && this.newDate < openingHour) {
-      this.toast.error(
-        'Sorry! Counter closed',
-        'Please read our terms and conditions'
-      );
-    }
-    //if user could not signed in
-    else if (!this.api.sessionUser.value) {
-      this.toast.error(
-        'Log in!',
-        'Please login to continue booking'
-      );
-    }
-    //if seat array is undefined or no seats are selected
-    else if (this.seletedSeats == undefined || this.seletedSeats.length == 0) {
+    // Let every visitor inspect availability and choose seats before asking
+    // them to create an account or log in.
+    if (this.seletedSeats == undefined || this.seletedSeats.length == 0) {
       this.seletedSeats = [];
       this.toast.error('No seats selected!', 'Please select your seats');
     }
@@ -224,17 +223,72 @@ export class BookingComponent implements OnInit {
         'Online booking limited to 4 seats, read terms and conditions'
       );
     }
-    //saving seats to Database
+    // The backend session is the source of truth. Checking it here also avoids
+    // relying on a possibly stale client-side session value.
     else {
-      this.payBoolean = true;
-      this.seatContainer = true;
+      this.checkoutAuthPending = true;
+      this.api.getOptionalSession().subscribe({
+        next: (user) => {
+          this.checkoutAuthPending = false;
+          if (!user) {
+            this.redirectToLoginWithSeats();
+            return;
+          }
+
+          this.payBoolean = true;
+          this.seatContainer = true;
+          this.showPayPalSandbox = false;
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.checkoutAuthPending = false;
+          this.toast.error(
+            'Unable to continue',
+            'Please check your connection and try again.'
+          );
+          this.cdr.markForCheck();
+        },
+      });
     }
+  }
+
+  private redirectToLoginWithSeats(): void {
+    // Put the selected seat IDs in the internal return URL so they survive the
+    // login page without storing authentication or booking data in localStorage.
+    const returnUrl = this.router.serializeUrl(
+      this.router.createUrlTree([], {
+        relativeTo: this.route,
+        queryParams: { seats: this.seletedSeats.join(',') },
+        queryParamsHandling: 'merge',
+      })
+    );
+
+    this.toast.warning(
+      'Seats selected',
+      'Log in or sign up to continue to checkout.'
+    );
+    this.router.navigate(['/login'], {
+      queryParams: { mode: 'login', returnUrl },
+    });
   }
 
   cancelLocked() {
     this.seletedSeats = [];
     this.payBoolean = false;
     this.seatContainer = false;
+    this.showPayPalSandbox = false;
+  }
+
+  togglePayPalSandbox(): void {
+    this.showPayPalSandbox = !this.showPayPalSandbox;
+  }
+
+  completeDemoBooking(): void {
+    // This portfolio path demonstrates checkout without requiring payment credentials.
+    this.processBooking(
+      'Demo booking confirmed',
+      'No real payment was processed.'
+    );
   }
 
   onSeatToggle(seat: Seat) {
@@ -318,23 +372,17 @@ export class BookingComponent implements OnInit {
       },
       //successful transaction
       onClientAuthorization: (data) => {
-        //console.log('onClientAuthorization - you should probably inform your server about completed transaction at this point', data);
-        this.progressEvent = true;
-        this.payBoolean = false;
-        this.seatContainer = false;
-        this.toast.success('Please wait!', 'Processing your booking...');
-        //resetting bill details
-        this.UserSelectedSeat = 0;
-        this.totalSeatAmount = 0;
-        //api call to save seat details in db
-        this.saveSeatsInDB();
-        this.cdr.markForCheck();
+        this.processBooking(
+          'Sandbox payment approved',
+          'Processing your demo ticket...'
+        );
       },
       onCancel: (data, actions) => {
         //console.log('OnCancel', data, actions);
         this.seletedSeats = [];
         this.payBoolean = false;
         this.seatContainer = false;
+        this.showPayPalSandbox = false;
         this.toast.warning('Canceled!', 'Take time! We have seats for you.');
         this.cdr.markForCheck();
       },
@@ -343,6 +391,7 @@ export class BookingComponent implements OnInit {
         this.seletedSeats = [];
         this.payBoolean = false;
         this.seatContainer = false;
+        this.showPayPalSandbox = false;
         this.toast.warning(
           'Error!',
           'Recheck selected seats and internet connection, then try again.'
@@ -353,6 +402,15 @@ export class BookingComponent implements OnInit {
         //console.log('onClick', data, actions);
       },
     };
+  }
+
+  private processBooking(title: string, message: string): void {
+    this.progressEvent = true;
+    this.payBoolean = false;
+    this.showPayPalSandbox = false;
+    this.toast.success(title, message);
+    this.saveSeatsInDB();
+    this.cdr.markForCheck();
   }
 
   saveSeatsInDB() {
@@ -379,6 +437,8 @@ export class BookingComponent implements OnInit {
       .subscribe({
         next: (res: any) => {
           if (res) {
+            this.UserSelectedSeat = 0;
+            this.totalSeatAmount = 0;
             setTimeout(() => {
               this.progressEvent = false;
               this.router.navigateByUrl('/profile');
@@ -387,6 +447,8 @@ export class BookingComponent implements OnInit {
           }
         },
         error: (err: HttpErrorResponse) => {
+          this.progressEvent = false;
+          this.seatContainer = false;
           console.log(err);
           if (err.status === 401) {
             this.toast.error('Session expired', 'Please log in to book seats');

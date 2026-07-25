@@ -13,6 +13,7 @@
             class="sidebar-open"
             type="button"
             aria-label="Open navigation menu"
+            title="Open navigation menu"
             (click)="toggleSidebar()"
           >
             <i class="fa-solid fa-bars fa-xl"></i>
@@ -55,6 +56,8 @@
             data-bs-toggle="dropdown"
             data-bs-display="static"
             aria-expanded="false"
+            aria-label="Open account menu"
+            title="Open account menu"
           >
             <ng-container *ngIf="userImageStatus; else initialsAvatar">
               <img

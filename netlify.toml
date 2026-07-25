@@ -1,9 +1,16 @@
+[build]
+  command = "npm run build"
+  publish = "dist/opera-time/browser"
+
+# Keep API requests on the frontend origin so HttpOnly session cookies remain
+# first-party, then proxy them to the Render backend.
 [[redirects]]
   from = "/api/*"
   to = "https://operatimeserver-2023.onrender.com/api/:splat"
   status = 200
   force = true
 
+# Angular owns client-side routes such as /search, /booking/:id, and /profile.
 [[redirects]]
   from = "/*"
   to = "/index.html"

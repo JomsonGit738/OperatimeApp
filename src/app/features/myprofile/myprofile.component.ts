@@ -50,14 +50,25 @@ export class MyprofileComponent {
     if (!ticket.operaId) {
       return;
     }
-    const qrUrl = this.buildQrUrl(ticket.operaId);
+    const payload = JSON.stringify({
+      app: 'OPERATIME',
+      version: 1,
+      type: 'DIGITAL_TICKET',
+      ticketId: ticket.operaId,
+      movie: ticket.movietitle,
+      seats: ticket.seats.map(String),
+    });
     const dialogData: TicketQrDialogData = {
-      title: `QR for ${ticket.movietitle}`,
-      qrUrl,
+      title: ticket.movietitle,
+      ticketId: ticket.operaId,
+      seats: ticket.seats.map(String),
+      qrUrl: this.buildQrUrl(payload),
     };
     this.dialog.open(TicketQrDialogComponent, {
       data: dialogData,
       panelClass: 'qr-dialog-panel',
+      width: 'min(92vw, 460px)',
+      maxWidth: '460px',
     });
   }
 
@@ -101,7 +112,8 @@ export class MyprofileComponent {
 
   private buildQrUrl(payload: string): string {
     const encoded = encodeURIComponent(payload);
-    return `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encoded}`;
+    // More payload plus high error correction creates a denser, richer QR matrix.
+    return `https://api.qrserver.com/v1/create-qr-code/?size=420x420&ecc=H&qzone=4&format=svg&color=5e101d&bgcolor=ffffff&data=${encoded}`;
   }
 }
 

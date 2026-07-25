@@ -15,7 +15,16 @@
       >
         <div class="ag-courses-item_bg"></div>
 
-        <div class="deta" (click)="routeWithId(movie.id)">
+        <div
+          class="deta"
+          (click)="routeWithId(movie.id)"
+          (keydown.enter)="routeWithId(movie.id)"
+          (keydown.space)="$event.preventDefault(); routeWithId(movie.id)"
+          role="button"
+          tabindex="0"
+          aria-label="View movie details"
+          title="View movie details"
+        >
           <i
             class="fa-solid fa-circle-info fa-2xl"
             style="color: #ffffff; z-index: 3; cursor: pointer"
@@ -101,21 +110,55 @@
           <p>Total Amount:</p>
           <h5>$ {{ totalSeatAmount }}</h5>
         </div>
-        <button *ngIf="!payBoolean" (click)="seatLocked()" class="proceed">
-          Pay
-        </button>
-        <ngx-paypal
-          *ngIf="payBoolean"
-          [config]="payPalConfig"
-          style="margin-top: auto"
+        <button
+          *ngIf="!payBoolean && !progressEvent"
+          (click)="seatLocked()"
+          class="proceed"
+          [disabled]="checkoutAuthPending"
         >
-        </ngx-paypal>
-        <button *ngIf="payBoolean" (click)="cancelLocked()" class="proceed">
-          Cancel
+          {{ checkoutAuthPending ? "Checking session..." : "Continue to checkout" }}
         </button>
-        <p *ngIf="!payBoolean" class="terms">
-          <i class="fa-sharp fa-solid fa-circle-info"></i> By clicking Pay, you
-          are agreeing to the
+        <div *ngIf="payBoolean" class="demo-checkout">
+          <span class="demo-badge">Portfolio demo</span>
+          <h5>Complete your demo booking</h5>
+          <p>
+            Reserve these seats instantly. No real money or payment account is
+            required.
+          </p>
+          <button type="button" class="demo-booking-btn" (click)="completeDemoBooking()">
+            <i class="fa-solid fa-ticket me-2"></i>
+            Complete Demo Booking
+          </button>
+
+          <button
+            type="button"
+            class="sandbox-toggle"
+            (click)="togglePayPalSandbox()"
+            [attr.aria-expanded]="showPayPalSandbox"
+          >
+            <span>Try PayPal Sandbox</span>
+            <i
+              class="fa-solid"
+              [class.fa-chevron-down]="!showPayPalSandbox"
+              [class.fa-chevron-up]="showPayPalSandbox"
+            ></i>
+          </button>
+
+          <div *ngIf="showPayPalSandbox" class="sandbox-panel">
+            <p>
+              Optional integration demo. A PayPal Sandbox buyer account is
+              required; no real money is charged.
+            </p>
+            <ngx-paypal [config]="payPalConfig"></ngx-paypal>
+          </div>
+
+          <button type="button" (click)="cancelLocked()" class="cancel-checkout">
+            Back to seats
+          </button>
+        </div>
+        <p *ngIf="!payBoolean && !progressEvent" class="terms">
+          <i class="fa-sharp fa-solid fa-circle-info"></i> This is a portfolio
+          demo. No real payment is required. By continuing, you agree to the
           <a
             class="conditions"
             data-bs-toggle="modal"
@@ -139,42 +182,53 @@
   aria-labelledby="staticBackdropLabel"
   aria-hidden="true"
 >
-  <div class="modal-dialog">
-    <div class="modal-content">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content demo-terms-modal">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="staticBackdropLabel">
-          Terms & Conditions
-        </h1>
+        <div>
+          <span class="terms-badge">Operatime portfolio</span>
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">
+            Demo Booking Terms
+          </h1>
+          <p class="terms-intro">
+            A quick note before you continue with the showcase booking.
+          </p>
+        </div>
         <button
           type="button"
-          class="btn-close"
+          class="btn-close btn-close-white"
           data-bs-dismiss="modal"
           aria-label="Close"
+          title="Close terms and conditions"
         ></button>
       </div>
       <div class="modal-body">
-        <p style="font-size: 12px">
-          1. ticket counter is closed at 8:00 PM. opening at 12:00 AM! <br />
-          2. Online users can only book 4 seats at a time<br />
-          3. Children above the age of 3 years require tickets for `U` or `U/A`
-          rated movies. <br />
-          4. In case a ticket is lost or misplaced, a duplicate ticket cannot be
-          issued.<br />
-          5. Tickets once purchased cannot be cancelled, exchanged or
-          refunded.<br />
-          6. Guest Agrees to be contacted by INOX Management for the purpose of
-          seeking feedback for service improvement.<br />
-          7. Decision(s) taken by INOX shall be final and binding, Rights of
-          admission reserved.<br />
-          8. Outside food and beverages are not allowed inside the cinema
-          premises.<br />
-          9. Patrons under the influence of alcohol or drugs will not be allowed
-          inside the Cinema Premises.<br />
-        </p>
+        <ul class="demo-terms-list">
+          <li>
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Operatime is a portfolio demonstration; no real ticket is sold.</span>
+          </li>
+          <li>
+            <i class="fa-solid fa-chair"></i>
+            <span>Demo bookings are limited to four seats at a time.</span>
+          </li>
+          <li>
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Complete Demo Booking never charges money or requests payment details.</span>
+          </li>
+          <li>
+            <i class="fa-brands fa-paypal"></i>
+            <span>PayPal Sandbox is optional and processes test funds only.</span>
+          </li>
+          <li>
+            <i class="fa-solid fa-ticket"></i>
+            <span>Saved tickets and QR codes exist only to demonstrate the application flow.</span>
+          </li>
+        </ul>
       </div>
       <div class="modal-footer">
-        <button type="button" data-bs-dismiss="modal">
-          Okay, I understood
+        <button type="button" class="terms-confirm-btn" data-bs-dismiss="modal">
+          I understand
         </button>
       </div>
     </div>

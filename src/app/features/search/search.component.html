@@ -75,6 +75,7 @@
                 [disabled]="vm.page === 1"
                 (click)="goToPage(1, vm.totalPages)"
                 aria-label="Go to first page"
+                title="First page"
               >
                 &laquo;
               </button>
@@ -84,6 +85,7 @@
                 [disabled]="vm.page === 1"
                 (click)="goToPage(vm.page - 1, vm.totalPages)"
                 aria-label="Go to previous page"
+                title="Previous page"
               >
                 &lsaquo;
               </button>
@@ -104,6 +106,7 @@
                 [disabled]="vm.page === vm.totalPages"
                 (click)="goToPage(vm.page + 1, vm.totalPages)"
                 aria-label="Go to next page"
+                title="Next page"
               >
                 &rsaquo;
               </button>
@@ -113,6 +116,7 @@
                 [disabled]="vm.page === vm.totalPages"
                 (click)="goToPage(vm.totalPages, vm.totalPages)"
                 aria-label="Go to last page"
+                title="Last page"
               >
                 &raquo;
               </button>

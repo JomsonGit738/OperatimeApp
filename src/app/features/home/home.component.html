@@ -28,7 +28,13 @@
             </button>
             <i
               (click)="routeWithId(mId)"
+              (keydown.enter)="routeWithId(mId)"
+              (keydown.space)="$event.preventDefault(); routeWithId(mId)"
               class="fa-solid fa-circle-info fa-2xl"
+              role="button"
+              tabindex="0"
+              aria-label="View movie details"
+              title="View movie details"
               style="color: #ffffff; align-self: center; cursor: pointer"
             ></i>
           </div>

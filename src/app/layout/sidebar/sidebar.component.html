@@ -1,20 +1,69 @@
 <div class="sidebar-shell" [class.sidebar-shell--open]="_opened">
   <nav class="sidebar-panel" aria-label="Primary navigation">
     <button
-      class="sidebar-close"
+      class="sidebar-close sidebar-action"
       type="button"
       aria-label="Close navigation menu"
+      data-tooltip="Close menu"
       (click)="closeSidebar()"
     >
-      <i class="left-menu-icon fas fa-close fa-xl"></i>
+      <i class="left-menu-icon fas fa-close fa-xl" aria-hidden="true"></i>
     </button>
     <div class="sidebar">
-      <i routerLink="/search" (click)="closeSidebar()" class="left-menu-icon fas fa-search fa-xl"></i>
-      <i routerLink="/" (click)="closeSidebar()" class="left-menu-icon fas fa-home fa-xl"></i>
-      <i routerLink="/profile" (click)="closeSidebar()" class="left-menu-icon fas fa-user fa-xl"></i>
-      <i class="left-menu-icon fas fa-bookmark fa-xl"></i>
-      <i class="left-menu-icon fas fa-tv fa-xl"></i>
-      <i class="left-menu-icon fas fa-hourglass-start fa-xl"></i>
+      <button
+        type="button"
+        class="sidebar-action"
+        routerLink="/search"
+        aria-label="Search movies"
+        data-tooltip="Search movies"
+        (click)="closeSidebar()"
+      >
+        <i class="left-menu-icon fas fa-search fa-xl" aria-hidden="true"></i>
+      </button>
+      <button
+        type="button"
+        class="sidebar-action"
+        routerLink="/"
+        aria-label="Home"
+        data-tooltip="Home"
+        (click)="closeSidebar()"
+      >
+        <i class="left-menu-icon fas fa-home fa-xl" aria-hidden="true"></i>
+      </button>
+      <button
+        type="button"
+        class="sidebar-action"
+        routerLink="/profile"
+        aria-label="My profile"
+        data-tooltip="My profile"
+        (click)="closeSidebar()"
+      >
+        <i class="left-menu-icon fas fa-user fa-xl" aria-hidden="true"></i>
+      </button>
+      <button
+        type="button"
+        class="sidebar-action"
+        aria-label="Watchlist, coming soon"
+        data-tooltip="Watchlist · Coming soon"
+      >
+        <i class="left-menu-icon fas fa-bookmark fa-xl" aria-hidden="true"></i>
+      </button>
+      <button
+        type="button"
+        class="sidebar-action"
+        aria-label="TV shows, coming soon"
+        data-tooltip="TV shows · Coming soon"
+      >
+        <i class="left-menu-icon fas fa-tv fa-xl" aria-hidden="true"></i>
+      </button>
+      <button
+        type="button"
+        class="sidebar-action"
+        aria-label="Upcoming movies, coming soon"
+        data-tooltip="Upcoming · Coming soon"
+      >
+        <i class="left-menu-icon fas fa-hourglass-start fa-xl" aria-hidden="true"></i>
+      </button>
     </div>
   </nav>
 

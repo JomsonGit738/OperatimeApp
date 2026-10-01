@@ -1,176 +1,167 @@
-# Operatime Web App
+# Operatime
 
-Operatime is a portfolio movie-ticket booking application built to demonstrate
-an end-to-end Angular experience: public movie discovery, secure authentication,
-seat selection, a recruiter-friendly demo checkout, booking history, and digital
-ticket QR codes.
+Operatime is a movie ticket booking web app built with Angular. You can browse and search movies, sign in, pick seats, complete a booking, and see your tickets with QR codes in your profile.
 
-This repository contains the Angular frontend. The API is maintained in the
-sibling `OperatimeServer` repository.
+**Live demo:** https://operatimebooking.netlify.app/
 
-> **Portfolio demo:** Operatime does not sell real cinema tickets. The default
-> checkout does not charge money, and generated tickets and QR codes are for
-> demonstration only.
+## Screenshots
+
+<p>
+  <img src="screenshots/1.png" alt="Operatime screenshot 1" width="32%">
+  <img src="screenshots/2.png" alt="Operatime screenshot 2" width="32%">
+  <img src="screenshots/3.png" alt="Operatime screenshot 3" width="32%">
+</p>
+<p>
+  <img src="screenshots/4.png" alt="Operatime screenshot 4" width="32%">
+  <img src="screenshots/5.png" alt="Operatime screenshot 5" width="32%">
+  <img src="screenshots/6.png" alt="Operatime screenshot 6" width="32%">
+</p>
+
+> **Note:** This is a demo project. It does not sell real cinema tickets. The default checkout does not charge any money, and the tickets and QR codes are for demonstration only.
+>
+> The backend runs on Render's free tier, so the first request after some inactivity can take a little longer.
+
+This repository has the Angular frontend. The API is in a separate repository, `OperatimeServer`.
 
 ## Features
 
-- Public homepage with now-playing, popular, trending, and latest movie rows.
-- Movie details, trailers, cast information, ratings, and summaries.
-- Search with initial recommendations, pagination, whitespace protection, and
-  poster-only result filtering.
-- Email/password and verified Google sign-in.
-- Authentication through an HttpOnly backend session cookie; tokens are never
-  stored in browser storage.
-- Protected booking and profile routes.
-- Interactive 48-seat layout with occupied-seat and four-seat-limit handling.
-- One-click **Complete Demo Booking** flow for portfolio visitors.
-- Optional, clearly labelled PayPal Sandbox integration.
-- Profile page with booking history and dense demo-ticket QR codes.
-- Responsive dark interface with a shared muted wine-red design system.
+- Home page with now playing, popular, trending and latest movies
+- Movie details with trailers, cast, ratings and summary
+- Search with starting recommendations, pagination and poster-only results
+- Email/password login and verified Google sign-in
+- Login session handled by an HttpOnly cookie from the backend, so no token is kept in browser storage
+- Protected routes for booking and profile
+- Interactive 48-seat layout with occupied seats and a four-seat limit
+- One-click demo booking, so the full flow can be tried without any payment
+- Optional PayPal Sandbox payment, clearly marked as a test
+- Profile page with booking history and QR code tickets
+- Responsive dark theme with a wine-red colour style
 
-## Application flow
+## How it works
 
 ```text
-Public visitor
-  -> browses/searches movies
-  -> selects Book Tickets
-  -> signs in when required
+Visitor
+  -> browses or searches movies
+  -> clicks Book Tickets
+  -> signs in if needed
   -> selects seats
-  -> completes a demo booking (or optionally tests PayPal Sandbox)
-  -> views the saved ticket and QR code in their profile
+  -> completes the demo booking (or tries PayPal Sandbox)
+  -> sees the ticket and QR code in the profile page
 
-Angular browser
+Angular app
   -> OperatimeServer /api
-  -> MongoDB for users/bookings
-  -> TMDB for movie catalog data
+  -> MongoDB for users and bookings
+  -> TMDB for movie data
 ```
 
-## Technology
+## Tech stack
 
-- Angular 18 with standalone components
-- Angular Material
+- Angular 18 (standalone components)
+- Angular Material and Bootstrap
 - RxJS
-- Bootstrap
-- Google Identity through `@abacritt/angularx-social-login`
-- PayPal Sandbox through `ngx-paypal`
-- TMDB images and catalog data, accessed through the backend
+- Google sign-in with `@abacritt/angularx-social-login`
+- PayPal Sandbox with `ngx-paypal`
+- TMDB movie data, accessed through the backend
 
 ## Requirements
 
 - Node.js 18 or newer
 - npm
-- The sibling `OperatimeServer` running locally on port `3000`
+- `OperatimeServer` running locally on port 3000
 
-## Local setup
+## Running locally
 
-1. Start the backend:
+1. Start the backend (from the `OperatimeServer` folder):
 
-   ```powershell
-   cd C:\Projects\OperatimeServer
+```bash
    npm install
    npm start
-   ```
+```
 
-2. Install and start the Angular app:
+2. Start the Angular app (from this folder):
 
-   ```powershell
-   cd C:\Projects\OperatimeApp
+```bash
    npm install
    npm start
-   ```
+```
 
 3. Open `http://localhost:4200`.
 
-## Frontend environments
+## Environment setup
 
-Angular environments are stored in:
+Angular environment files are in `src/environments/`:
 
-- `src/environments/environment.ts` for local development.
-- `src/environments/environment.production.ts` for production builds.
+- `environment.ts` for local development
+- `environment.production.ts` for production builds
 
-Development currently uses:
+Development uses:
 
 ```ts
 apiBaseUrl: 'http://localhost:3000/api'
 ```
 
-Production currently uses:
+Production uses:
 
 ```ts
 apiBaseUrl: '/api'
 ```
 
-Netlify uses `netlify.toml` to proxy `/api/*` to
-`https://operatimeserver-2023.onrender.com/api/*`. Keeping API traffic
-same-origin makes the Secure, HttpOnly, SameSite session cookie reliable. The
-same file also publishes `dist/opera-time/browser` and redirects Angular
-client-side routes to `index.html`.
+On Netlify, `netlify.toml` proxies `/api/*` to the backend on Render
+(`https://operatimeserver-2023.onrender.com/api/*`). This keeps API calls on the same origin, so the Secure, HttpOnly, SameSite cookie works reliably. The same file also sets the publish folder (`dist/opera-time/browser`) and redirects Angular routes to `index.html`.
 
-The Google OAuth client ID is a public browser identifier and is also
-environment-configured. The matching client ID must be configured in the
-backend so it can verify Google ID tokens.
+The Google OAuth client ID is public and comes from the environment files. The same client ID must be set in the backend so it can verify Google ID tokens.
 
 ## Commands
 
-| Command | Purpose |
+| Command | What it does |
 | --- | --- |
-| `npm start` | Start the development server |
-| `npm run build` | Create the production build |
-| `npm run watch` | Build continuously in development mode |
-| `npm test` | Run Angular tests |
+| `npm start` | Starts the development server |
+| `npm run build` | Creates the production build |
+| `npm run watch` | Builds continuously in development mode |
+| `npm test` | Runs the Angular tests |
 
-Production output is created under `dist/opera-time/browser`.
+The production build is created in `dist/opera-time/browser`.
 
-## Route access
+## Routes
 
 | Route | Access | Purpose |
 | --- | --- | --- |
-| `/` | Public | Homepage and movie discovery |
+| `/` | Public | Home page and movie discovery |
 | `/search` | Public | Search and recommendations |
 | `/movie/:id` | Public | Movie details |
-| `/login` | Public | Login and combined signup flow |
-| `/signup` | Public | Signup-focused authentication view |
-| `/booking/:id` | Authenticated | Seat selection and demo checkout |
-| `/profile` | Authenticated | User details, tickets, and QR codes |
+| `/login` | Public | Login and signup |
+| `/signup` | Public | Signup-focused view |
+| `/booking/:id` | Login required | Seat selection and demo checkout |
+| `/profile` | Login required | User details, tickets and QR codes |
 
-## Security design
+## Security
 
-- TMDB credentials live only in the backend environment.
-- Angular never talks directly to the TMDB API.
-- The login JWT is stored in an HttpOnly cookie, not `localStorage` or
-  `sessionStorage`.
-- API requests include credentials only for the configured backend URL.
-- Google sign-in sends a signed Google ID token for backend verification.
-- Google One Tap and automatic account selection are disabled.
-- Booking ownership comes from the verified backend session, never a
-  browser-submitted email.
-- Production API traffic should remain HTTPS and preferably same-origin.
+- TMDB credentials are kept only in the backend environment, and the Angular app never calls TMDB directly.
+- The login JWT is stored in an HttpOnly cookie, not in `localStorage` or `sessionStorage`.
+- Requests send credentials only to the configured backend URL.
+- Google sign-in sends a signed Google ID token, which the backend verifies.
+- Google One Tap and automatic account selection are turned off.
+- Booking ownership comes from the verified backend session, not from an email sent by the browser.
+- In production, API traffic should stay on HTTPS and preferably on the same origin.
 
-## Demo payment and QR limitations
+## Limitations of the demo
 
-The default checkout intentionally bypasses real payment so recruiters can
-review the entire experience without creating a PayPal Sandbox buyer account.
-PayPal Sandbox remains available as an optional integration demonstration.
-
-The QR code contains structured demo ticket data to create a realistic, dense
-matrix. It is generated client-side and is not a cryptographically signed
-admission credential. A production cinema system would create and validate
-signed tickets on the backend and would verify payment before confirming seats.
+- **Payment:** The default checkout skips real payment so anyone can try the full flow without a PayPal Sandbox account. PayPal Sandbox is still there as an optional test.
+- **QR codes:** The QR code holds demo ticket data and is generated in the browser. It is not a signed ticket. A real cinema system would create and verify signed tickets on the backend and confirm payment before booking seats.
 
 ## Project structure
 
 ```text
 src/
   app/
-    core/          API, auth, guards, and HTTP behavior
-    features/      Home, search, login, details, booking, and profile
+    core/          API, auth, guards and HTTP handling
+    features/      Home, search, login, details, booking and profile
     layout/        Header and sidebar
     models/        Frontend API models
-  environments/    Development and production configuration
+  environments/    Development and production config
   shared/          Shared models and loader
 ```
 
 ## Backend
 
-See `C:\Projects\OperatimeServer\README.md` for API routes, environment
-variables, security behavior, and server setup.
+The API routes, environment variables, security behaviour and setup steps are in the `OperatimeServer` repository README.
